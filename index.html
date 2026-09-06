@@ -1,0 +1,1774 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Sangam — where challenges meet solvers</title>
+<meta name="description" content="Post a societal challenge. Universities and industry converge to solve it.">
+<meta name="theme-color" content="#121C2D">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" href="icons/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#121C2D;
+  --ink2:#1B2A42;
+  --ink3:#26385a;
+  --paper:#F6F1E4;
+  --paper2:#EFE8D6;
+  --gold:#E3B23C;
+  --teal:#4F9E9A;
+  --brick:#C1554A;
+  --sage:#6B8F5A;
+  --text-dark:#121C2D;
+  --text-soft:#55637A;
+  --text-onink:#EDEAE0;
+  --text-onink-soft:#9FADC4;
+  --line:#DED5BE;
+  --line-ink:rgba(237,234,224,0.14);
+  --radius:14px;
+  --shadow:0 8px 24px rgba(18,28,45,0.10);
+  --max:1180px;
+}
+*{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{
+  font-family:'Inter',system-ui,sans-serif;
+  background:var(--paper);
+  color:var(--text-dark);
+  -webkit-font-smoothing:antialiased;
+  overscroll-behavior-y:none;
+}
+body.large-text{font-size:18px;}
+body.large-text .section-title{font-size:18px;}
+body.high-contrast{--paper:#FFFFFF; --paper2:#F0F0F0; --text-soft:#333333; --line:#000000;}
+body.high-contrast .ink-card{background:#000; }
+h1,h2,h3{font-family:'Fraunces',serif; letter-spacing:-0.01em; margin:0;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;}
+::selection{background:var(--gold); color:var(--ink);}
+
+/* ---------- App shell ---------- */
+#app{max-width:100vw; min-height:100vh; display:flex; flex-direction:column;}
+.topbar{
+  position:sticky; top:0; z-index:40;
+  background:var(--ink); color:var(--text-onink);
+  padding:14px 18px; display:flex; align-items:center; justify-content:space-between;
+  border-bottom:1px solid var(--line-ink);
+}
+.brand{display:flex; align-items:center; gap:10px;}
+.brand-mark{width:26px;height:26px;flex:none;}
+.brand-name{font-family:'Fraunces',serif; font-weight:600; font-size:19px; letter-spacing:-0.02em;}
+.brand-tag{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-onink-soft); letter-spacing:0.04em; display:block; margin-top:1px;}
+.icon-btn{background:none;border:none;color:var(--text-onink);font-size:20px;cursor:pointer;padding:6px;line-height:1;}
+
+.main{flex:1; padding:16px 16px 90px; max-width:var(--max); width:100%; margin:0 auto;}
+
+/* Bottom nav (mobile) */
+.bottom-nav{
+  position:fixed; bottom:0; left:0; right:0; z-index:50;
+  background:var(--ink); border-top:1px solid var(--line-ink);
+  display:flex; justify-content:space-around; padding:6px 4px calc(6px + env(safe-area-inset-bottom));
+}
+.nav-item{
+  background:none;border:none;color:var(--text-onink-soft);cursor:pointer;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  font-size:10px; font-family:'IBM Plex Mono',monospace; padding:4px 8px; border-radius:10px;
+}
+.nav-item .ic{font-size:19px;}
+.nav-item.active{color:var(--gold);}
+
+/* Desktop sidebar */
+.desktop-shell{display:flex; max-width:1400px; margin:0 auto; width:100%;}
+.sidebar{
+  display:none; width:230px; flex:none; background:var(--ink); color:var(--text-onink);
+  min-height:100vh; padding:22px 16px; position:sticky; top:0; align-self:flex-start;
+}
+.sidebar .nav-item{flex-direction:row; justify-content:flex-start; gap:12px; width:100%; padding:10px 12px; font-size:13px; margin-bottom:4px;}
+.sidebar .nav-item .ic{font-size:17px;}
+
+@media (min-width:900px){
+  .bottom-nav{display:none;}
+  .sidebar{display:flex; flex-direction:column;}
+  .main{padding:28px 32px 60px;}
+}
+
+/* ---------- Typography helpers ---------- */
+.section-title{font-family:'IBM Plex Mono',monospace; font-size:11px; letter-spacing:0.08em; text-transform:uppercase; color:var(--text-soft); margin:22px 0 10px;}
+.section-title:first-child{margin-top:2px;}
+.eyebrow{font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.08em; text-transform:uppercase;}
+
+/* ---------- Hero / confluence ---------- */
+.hero{
+  background:var(--ink); color:var(--text-onink); border-radius:20px; padding:26px 22px 22px;
+  position:relative; overflow:hidden; margin-bottom:4px;
+}
+.hero h1{font-size:26px; font-weight:600; line-height:1.15; max-width:20ch;}
+.hero p{color:var(--text-onink-soft); font-size:14px; margin-top:8px; max-width:38ch; line-height:1.5;}
+.confluence-wrap{margin-top:18px; display:flex; align-items:center; gap:18px; flex-wrap:wrap;}
+.confluence-svg{width:150px; height:120px; flex:none;}
+.stream-line{stroke-dasharray:200; stroke-dashoffset:200; animation:flow 1.8s ease forwards;}
+.stream-line:nth-child(2){animation-delay:0.15s;}
+.stream-line:nth-child(3){animation-delay:0.3s;}
+@keyframes flow{to{stroke-dashoffset:0;}}
+@media (prefers-reduced-motion:reduce){.stream-line{animation:none; stroke-dashoffset:0;}}
+.hero-stats{display:flex; gap:18px; flex-wrap:wrap;}
+.hero-stat b{font-family:'Fraunces',serif; font-size:24px; font-weight:600; display:block;}
+.hero-stat span{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-onink-soft); text-transform:uppercase; letter-spacing:0.05em;}
+
+/* ---------- Cards ---------- */
+.card{
+  background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+  padding:16px; margin-bottom:12px; box-shadow:var(--shadow);
+}
+.role-card{display:flex; align-items:center; gap:14px; cursor:pointer; transition:transform .15s;}
+.role-card:active{transform:scale(0.98);}
+.role-swatch{width:40px;height:40px;border-radius:10px;flex:none; display:flex;align-items:center;justify-content:center; font-size:18px;}
+.role-card b{display:block; font-size:14px;}
+.role-card small{color:var(--text-soft); font-size:12px;}
+
+.challenge-card{cursor:pointer;}
+.challenge-card:active{transform:scale(0.99);}
+.tag-row{display:flex; gap:6px; flex-wrap:wrap; margin-bottom:8px;}
+.tag{
+  font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:0.03em; text-transform:uppercase;
+  padding:3px 8px; border-radius:20px; font-weight:500;
+}
+.tag-domain{background:var(--paper2); color:var(--text-dark);}
+.tag-status{color:#fff;}
+.status-open{background:var(--gold); color:var(--ink);}
+.status-review{background:var(--teal); color:#fff;}
+.status-progress{background:var(--ink3); color:#fff;}
+.status-pilot{background:var(--brick); color:#fff;}
+.status-solved{background:var(--sage); color:#fff;}
+.challenge-card h3{font-size:16px; font-weight:600; margin-bottom:6px; line-height:1.3;}
+.challenge-card p.desc{font-size:13px; color:var(--text-soft); line-height:1.5; margin:0 0 10px;}
+.meta-row{display:flex; align-items:center; justify-content:space-between; font-size:11px; color:var(--text-soft); font-family:'IBM Plex Mono',monospace;}
+.meta-row .stats{display:flex; gap:12px;}
+
+/* Role pill legend */
+.role-pill{display:inline-flex; align-items:center; gap:5px; font-size:11px; font-weight:600; padding:2px 9px 2px 6px; border-radius:20px;}
+.role-pill .dot{width:7px;height:7px;border-radius:50%;}
+.role-citizen{background:rgba(227,178,60,0.16); color:#8a6a12;}
+.role-citizen .dot{background:var(--gold);}
+.role-university{background:rgba(79,158,154,0.14); color:#2c6c68;}
+.role-university .dot{background:var(--teal);}
+.role-industry{background:rgba(193,85,74,0.13); color:#a1382e;}
+.role-industry .dot{background:var(--brick);}
+.role-government{background:rgba(107,143,90,0.15); color:#4a6339;}
+.role-government .dot{background:var(--sage);}
+
+/* ---------- Buttons / forms ---------- */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:8px;
+  border:none; border-radius:11px; padding:13px 18px; font-size:14px; font-weight:600;
+  cursor:pointer; font-family:'Inter',sans-serif;
+}
+.btn-primary{background:var(--ink); color:var(--text-onink);}
+.btn-primary:active{background:var(--ink2);}
+.btn-gold{background:var(--gold); color:var(--ink);}
+.btn-outline{background:none; border:1.5px solid var(--line); color:var(--text-dark);}
+.btn-block{width:100%;}
+.btn-sm{padding:8px 13px; font-size:12px; border-radius:9px;}
+.btn-row{display:flex; gap:10px; flex-wrap:wrap;}
+
+.field{margin-bottom:16px;}
+.field label{display:block; font-size:12px; font-weight:600; margin-bottom:6px; color:var(--text-dark);}
+.field .hint{font-size:11px; color:var(--text-soft); margin-top:5px;}
+input[type=text],input[type=search],textarea,select{
+  width:100%; border:1.5px solid var(--line); border-radius:10px; padding:12px 13px;
+  font-family:'Inter',sans-serif; font-size:14px; background:#fff; color:var(--text-dark);
+}
+textarea{resize:vertical; min-height:90px; line-height:1.5;}
+input:focus,textarea:focus,select:focus{outline:2px solid var(--gold); outline-offset:1px; border-color:var(--gold);}
+.chip-select{display:flex; flex-wrap:wrap; gap:8px;}
+.chip{
+  border:1.5px solid var(--line); border-radius:20px; padding:8px 14px; font-size:12.5px;
+  cursor:pointer; background:#fff; font-weight:500;
+}
+.chip.selected{background:var(--ink); color:var(--text-onink); border-color:var(--ink);}
+
+/* screen head */
+.screen-head{padding:20px 0 6px;}
+.screen-head h2{font-size:22px; font-weight:600;}
+.screen-head p{color:var(--text-soft); font-size:13px; margin-top:5px;}
+.screen-head-flex{display:flex; align-items:center; gap:10px; margin-bottom:2px;}
+.back-btn{background:var(--paper2); border:none; width:34px;height:34px;border-radius:9px; font-size:16px; cursor:pointer; flex:none;}
+
+/* proposal card */
+.proposal-card{border-left:3px solid var(--teal); padding:12px 14px; background:var(--paper2); border-radius:0 10px 10px 0; margin-bottom:10px;}
+.proposal-card.industry{border-left-color:var(--brick);}
+.proposal-card h4{font-size:14px; margin-bottom:4px;}
+.proposal-card p{font-size:12.5px; color:var(--text-soft); line-height:1.5; margin:6px 0 0;}
+.proposal-meta{font-family:'IBM Plex Mono',monospace; font-size:10.5px; color:var(--text-soft); display:flex; gap:10px; align-items:center;}
+
+.empty-state{text-align:center; padding:50px 20px; color:var(--text-soft);}
+.empty-state .ic{font-size:34px; margin-bottom:10px;}
+.empty-state h3{font-size:15px; margin-bottom:6px; color:var(--text-dark);}
+.empty-state p{font-size:13px;}
+
+.toast{
+  position:fixed; bottom:88px; left:50%; transform:translateX(-50%);
+  background:var(--ink); color:var(--text-onink); padding:11px 20px; border-radius:30px;
+  font-size:13px; z-index:100; box-shadow:0 8px 22px rgba(0,0,0,0.25); opacity:0; transition:opacity .25s, bottom .25s;
+  pointer-events:none; max-width:88vw; text-align:center;
+}
+.toast.show{opacity:1;}
+@media (min-width:900px){.toast{bottom:26px;}}
+
+.filter-row{display:flex; gap:8px; overflow-x:auto; padding-bottom:4px; margin-bottom:6px;}
+.filter-row::-webkit-scrollbar{display:none;}
+.pill-filter{
+  flex:none; font-size:12px; font-weight:600; padding:8px 14px; border-radius:20px;
+  background:#fff; border:1.5px solid var(--line); cursor:pointer; white-space:nowrap;
+}
+.pill-filter.active{background:var(--ink); color:var(--text-onink); border-color:var(--ink);}
+
+.stat-strip{display:flex; gap:10px; margin:14px 0;}
+.stat-box{flex:1; background:#fff; border:1px solid var(--line); border-radius:12px; padding:12px; text-align:center;}
+.stat-box b{font-family:'Fraunces',serif; font-size:20px; display:block;}
+.stat-box span{font-size:10px; font-family:'IBM Plex Mono',monospace; color:var(--text-soft); text-transform:uppercase;}
+
+.toggle-row{display:flex; align-items:center; justify-content:space-between; padding:13px 0; border-bottom:1px solid var(--line);}
+.toggle-row:last-child{border-bottom:none;}
+.toggle-row b{font-size:13px; display:block;}
+.toggle-row small{color:var(--text-soft); font-size:11.5px;}
+.switch{width:42px;height:24px;border-radius:20px;background:var(--line); position:relative; cursor:pointer; flex:none; border:none;}
+.switch.on{background:var(--sage);}
+.switch::after{content:'';position:absolute; top:3px;left:3px; width:18px;height:18px;border-radius:50%; background:#fff; transition:left .18s;}
+.switch.on::after{left:21px;}
+
+.upvote-btn{display:flex; flex-direction:column; align-items:center; gap:1px; background:var(--paper2); border:none; border-radius:9px; padding:6px 10px; cursor:pointer; font-family:'IBM Plex Mono',monospace;}
+.upvote-btn.voted{background:var(--gold); color:var(--ink);}
+.upvote-btn b{font-size:13px;}
+.upvote-btn span{font-size:9px; text-transform:uppercase;}
+
+.notif-item{display:flex; gap:12px; padding:13px 0; border-bottom:1px solid var(--line);}
+.notif-ic{width:34px;height:34px;border-radius:9px; flex:none; display:flex; align-items:center; justify-content:center; font-size:15px;}
+.notif-item.unread{background:rgba(227,178,60,0.06); margin:0 -8px; padding:13px 8px; border-radius:8px;}
+.notif-body b{font-size:13px;}
+.notif-body p{font-size:12.5px; color:var(--text-soft); margin:2px 0 0;}
+.notif-time{font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--text-soft);}
+
+.divider{height:1px; background:var(--line); margin:18px 0;}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ================= tiny local DB ================= */
+const DB = {
+  get(k, fallback){ try{ const v = localStorage.getItem('sg_'+k); return v===null? fallback : JSON.parse(v);}catch(e){return fallback;} },
+  set(k, v){ try{ localStorage.setItem('sg_'+k, JSON.stringify(v)); }catch(e){} }
+};
+
+/* ================= constants ================= */
+const DOMAINS = [
+  {id:'environment', label:'Environment & Climate', ic:'🌱'},
+  {id:'health', label:'Public Health', ic:'🩺'},
+  {id:'education', label:'Education', ic:'📚'},
+  {id:'infrastructure', label:'Urban Infrastructure', ic:'🏗️'},
+  {id:'agriculture', label:'Agriculture', ic:'🌾'},
+  {id:'water', label:'Water & Sanitation', ic:'💧'},
+  {id:'digital', label:'Digital Inclusion', ic:'📶'},
+  {id:'safety', label:'Public Safety', ic:'🛟'},
+  {id:'livelihood', label:'Livelihoods', ic:'💼'}
+];
+const STATUSES = ['Open','In Review','In Progress','Piloted','Solved'];
+const STATUS_CLASS = {'Open':'status-open','In Review':'status-review','In Progress':'status-progress','Piloted':'status-pilot','Solved':'status-solved'};
+
+const ROLES = {
+  citizen:{label:'Citizen', ic:'🧑', cls:'role-citizen', desc:'Post real challenges you see around you'},
+  university:{label:'University', ic:'🎓', cls:'role-university', desc:'Attach research & student teams to challenges'},
+  industry:{label:'Industry', ic:'🏭', cls:'role-industry', desc:'Fund, mentor, or pilot a working solution'},
+  government:{label:'Government', ic:'🏛️', cls:'role-government', desc:'Verify challenges & move them toward resolution'}
+};
+const SUGGESTION_STATUSES = ['Open','Taken up','Solved'];
+const SUGG_STATUS_CLASS = {'Open':'status-open','Taken up':'status-progress','Solved':'status-solved'};
+
+/* ================= seed data ================= */
+function seed(){
+  if(DB.get('challenges', null)) return;
+  const now = Date.now();
+  const challenges = [
+    {id:'c1', title:'Groundwater levels dropping fast in Nagpur outskirts', domain:'water', status:'In Progress',
+      desc:'Borewells in 6 villages near Nagpur have dropped over 40ft in three years. Farmers are switching to diesel pumps that dig deeper, worsening the problem. Need a scalable recharge or monitoring approach.',
+      postedBy:'Aarav Deshmukh', role:'citizen', scope:'Nagpur, Maharashtra', createdAt: now-1000*60*60*24*9, upvotes:42, votedBy:[]},
+    {id:'c2', title:'Final-year students dropping out due to informal exam fees', domain:'education', status:'Open',
+      desc:'Government college students in tribal blocks report unofficial "practical fees" pushing dropout rates up before final exams. Need a transparent reporting + verification mechanism.',
+      postedBy:'Kavita Oraon', role:'citizen', scope:'Gumla, Jharkhand', createdAt: now-1000*60*60*24*5, upvotes:27, votedBy:[]},
+    {id:'c3', title:'Street vendors have no cold storage — 30% produce lost daily', domain:'livelihood', status:'In Review',
+      desc:'Vegetable vendors near Ghazipur mandi lose roughly a third of stock to spoilage every day in summer. A shared, low-cost cold storage model could directly raise household income.',
+      postedBy:'Municipal Corp, East Delhi', role:'government', scope:'East Delhi', createdAt: now-1000*60*60*24*14, upvotes:61, votedBy:[]},
+    {id:'c4', title:'Air quality sensors needed for outskirts, not just city centre', domain:'environment', status:'Solved',
+      desc:'Existing AQI monitors cluster in central Pune, leaving industrial-belt outskirts unmeasured even though residents report the worst symptoms. Deployed a low-cost sensor mesh, now live.',
+      postedBy:'Rohan Fernandes', role:'citizen', scope:'Pune, Maharashtra', createdAt: now-1000*60*60*24*60, upvotes:88, votedBy:[]},
+    {id:'c5', title:'ASHA workers walk 8-10km/day with no route planning', domain:'health', status:'Piloted',
+      desc:'Community health workers in hilly blocks cover scattered households with no optimized route, cutting the number of homes they can reach. A simple offline route-planner could help.',
+      postedBy:'District Health Office', role:'government', scope:'Almora, Uttarakhand', createdAt: now-1000*60*60*24*20, upvotes:35, votedBy:[]},
+    {id:'c6', title:'Flood drains choked with plastic every monsoon in same 4 wards', domain:'infrastructure', status:'Open',
+      desc:'Same four wards flood every year within 48 hours of the first heavy monsoon rain, mainly from choked plastic in secondary drains. Needs both a sensing and a civic-behaviour solution.',
+      postedBy:'Fatima Sheikh', role:'citizen', scope:'Kochi, Kerala', createdAt: now-1000*60*60*24*2, upvotes:19, votedBy:[]}
+  ];
+  const proposals = [
+    {id:'p1', challengeId:'c1', title:'IoT water-table sensors + community recharge pits', org:'IIT Nagpur, Civil Dept', role:'university',
+      desc:'Deploying 20 low-cost water-table sensors and mapping recharge pit locations with a final-year thesis cohort. Data feeds a public dashboard for the gram panchayat.', createdAt: now-1000*60*60*24*6},
+    {id:'p2', challengeId:'c1', title:'Subsidised solar pump buy-back to cut diesel dependence', org:'GreenFlow Energy Pvt Ltd', role:'industry',
+      desc:'Offering a buy-back scheme so 200 farmers can swap diesel pumps for metered solar pumps at reduced draw rates, piloting alongside the sensor rollout.', createdAt: now-1000*60*60*24*4},
+    {id:'p3', challengeId:'c3', title:'Shared modular cold-room, pay-per-crate model', org:'IIM Lucknow, Rural Mgmt', role:'university',
+      desc:'Student consultancy project modelling a pay-per-crate shared cold-room at the mandi entrance, with break-even in 14 months at current vendor density.', createdAt: now-1000*60*60*24*10},
+    {id:'p4', challengeId:'c4', title:'Mesh sensor network — 40 nodes, open data API', org:'Envirotech Systems', role:'industry',
+      desc:'Deployed 40 low-cost PM2.5/PM10 nodes across outskirt wards, publishing an open API now used by two local news outlets for daily reporting.', createdAt: now-1000*60*60*24*40},
+    {id:'p5', challengeId:'c5', title:'Offline-first route optimiser for CHWs', org:'BITS Pilani, CS Dept', role:'university',
+      desc:'Android app precomputes optimal walking routes weekly using cached terrain + household data, works fully offline and syncs when workers reach a network zone.', createdAt: now-1000*60*60*24*15}
+  ];
+  DB.set('challenges', challenges);
+  DB.set('proposals', proposals);
+  DB.set('notifications', [
+    {id:'n1', text:'IIT Nagpur, Civil Dept proposed a solution on your challenge "Groundwater levels dropping fast"', time: now-1000*60*60*24*6, read:false, target:'c1'},
+    {id:'n2', text:'GreenFlow Energy Pvt Ltd proposed a solution on "Groundwater levels dropping fast"', time: now-1000*60*60*24*4, read:false, target:'c1'},
+    {id:'n3', text:'Government moved "Air quality sensors needed" to Solved', time: now-1000*60*60*24*30, read:true, target:'c4'}
+  ]);
+
+  DB.set('suggestions', [
+    {id:'s1', title:'Shared e-bicycle stands near the metro exit', domain:'infrastructure',
+      desc:'A lot of us walk 1.5km from the metro to the housing colony. A small e-bicycle stand with 10-15 cycles at the exit could cut that trip to 5 minutes and reduce auto-rickshaw overcharging complaints.',
+      group:'Sundarpur Residents Welfare Association', scope:'Sundarpur, Lucknow', createdAt: now-1000*60*60*24*3, upvotes:14, votedBy:[], status:'Open', takenBy:null},
+    {id:'s2', title:'Community composting corner for wet waste', domain:'environment',
+      desc:'Our colony generates a lot of kitchen waste that currently just goes to landfill. A shared composting corner, even a simple pit-based one, could turn this into usable soil for the park.',
+      group:'Green Lane Community Group', scope:'Indiranagar, Bengaluru', createdAt: now-1000*60*60*24*8, upvotes:22, votedBy:[], status:'Taken up',
+      takenBy:{org:'Christ University, Env. Sciences', role:'university'}}
+  ]);
+
+  DB.set('tournaments', [
+    {id:'t1', title:'Best fix for recurring monsoon flooding', domain:'infrastructure',
+      description:'The same four wards flood every monsoon from choked plastic in secondary drains (see linked challenge). Government is opening this up as a tournament since more than one team wants to take a shot at it — best working solution gets fast-tracked for real deployment.',
+      challengeIds:['c6'], prizeType:'fast-track',
+      prizeDetails:'Winning solution gets first pilot deployment across all 4 affected wards, fast-tracked by the Kochi Municipal Corporation, plus official recognition on Sangam.',
+      deadline:'2026-09-30', status:'Open', createdAt: now-1000*60*60*24*7,
+      submissions:[
+        {id:'sub1', org:'NIT Calicut, Civil Dept', role:'university', title:'Sensor-triggered drain gates', desc:'Low-cost water-level sensors trigger a mesh gate to close before major plastic clumps enter secondary drains, with an SMS alert to municipal staff for manual clearing.', createdAt: now-1000*60*60*24*4},
+        {id:'sub2', org:'ClearFlow Robotics', role:'industry', title:'Autonomous drain-clearing bot', desc:'A tethered, low-cost robotic skimmer that patrols secondary drains twice daily during monsoon season, collecting plastic before it accumulates at choke points.', createdAt: now-1000*60*60*24*2}
+      ],
+      winner:null}
+  ]);
+}
+seed();
+
+/* ================= state ================= */
+let screenStack = [{screen:'home'}];
+let currentRole = DB.get('role','citizen');
+let filterDomain = DB.get('exploreDomain','all');
+let filterStatus = 'all';
+let exploreQuery = '';
+let exploreTab = 'challenges';
+
+function cur(){ return screenStack[screenStack.length-1]; }
+function go(screen, opts){ screenStack.push(Object.assign({screen}, opts||{})); render(); window.scrollTo(0,0); }
+function back(){ if(screenStack.length>1) screenStack.pop(); render(); window.scrollTo(0,0); }
+function goRoot(screen, opts){ screenStack=[Object.assign({screen}, opts||{})]; render(); window.scrollTo(0,0); }
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(window._toastT);
+  window._toastT = setTimeout(()=>t.classList.remove('show'), 2200);
+}
+function timeAgo(ts){
+  const s = Math.floor((Date.now()-ts)/1000);
+  if(s<60) return 'just now';
+  if(s<3600) return Math.floor(s/60)+'m ago';
+  if(s<86400) return Math.floor(s/3600)+'h ago';
+  const d = Math.floor(s/86400);
+  if(d<30) return d+'d ago';
+  return Math.floor(d/30)+'mo ago';
+}
+function domainInfo(id){ return DOMAINS.find(d=>d.id===id) || DOMAINS[0]; }
+function rolePill(role){
+  const r = ROLES[role];
+  return `<span class="role-pill ${r.cls}"><span class="dot"></span>${r.label}</span>`;
+}
+function slugify(s){ return (s||'').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,''); }
+function getOrgName(role){ return DB.get('orgName_'+(role||currentRole), ''); }
+function setOrgName(role, name){ DB.set('orgName_'+role, name); }
+function getCitizenGroup(){ return DB.get('citizenGroup', null); }
+function hasValidGroup(){ const g = getCitizenGroup(); return !!(g && g.name && g.members && g.members.length>=5); }
+function displayName(role){
+  if(role==='citizen'){ const g = getCitizenGroup(); if(g && g.name) return g.name; return getOrgName('citizen') || 'You'; }
+  const org = getOrgName(role);
+  if(org) return org;
+  if(role==='government') return 'Government';
+  return ROLES[role].label;
+}
+function goPost(type){
+  if(currentRole==='citizen' && !hasValidGroup()){
+    showToast('Citizens post as a registered group of 5 or more');
+    go('registerGroup', {then:type});
+    return;
+  }
+  go(type==='challenge'?'postChallenge':'postSuggestion');
+}
+
+/* ================= icons (inline svg-ish emoji kept simple) ================= */
+const NAV_ITEMS = [
+  {id:'home', ic:'⌂', label:'Home'},
+  {id:'explore', ic:'◎', label:'Explore'},
+  {id:'post', ic:'＋', label:'Post'},
+  {id:'updates', ic:'✉', label:'Updates'},
+  {id:'profile', ic:'☺', label:'Profile'}
+];
+
+/* ================= actions ================= */
+function switchRole(r){
+  currentRole = r; DB.set('role', r);
+  showToast(`Switched to ${ROLES[r].label} view`);
+  render();
+}
+function toggleUpvote(id){
+  const list = DB.get('challenges',[]);
+  const ch = list.find(c=>c.id===id); if(!ch) return;
+  ch.votedBy = ch.votedBy||[];
+  const idx = ch.votedBy.indexOf(currentRole+':you');
+  if(idx>-1){ ch.votedBy.splice(idx,1); ch.upvotes--; } else { ch.votedBy.push(currentRole+':you'); ch.upvotes++; }
+  DB.set('challenges', list);
+  render();
+}
+function setChallengeStatus(id, status){
+  const list = DB.get('challenges',[]);
+  const ch = list.find(c=>c.id===id); if(!ch) return;
+  ch.status = status; DB.set('challenges', list);
+  const notifs = DB.get('notifications',[]);
+  notifs.unshift({id:'n'+Date.now(), text:`Government moved "${ch.title}" to ${status}`, time:Date.now(), read:false, target:id});
+  DB.set('notifications', notifs);
+  showToast(`Status updated to "${status}"`);
+  render();
+}
+function photoCaptureHTML(kind){
+  return `
+  <div style="display:flex; gap:10px; align-items:center;">
+    <label class="btn btn-outline btn-sm" style="cursor:pointer;">
+      📷 Take / choose photo
+      <input type="file" accept="image/*" capture="environment" style="display:none;" onchange="handlePhotoSelect(event,'${kind}')">
+    </label>
+    <div id="photo-preview-${kind}"></div>
+  </div>`;
+}
+function handlePhotoSelect(event, kind){
+  const file = event.target.files && event.target.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e){
+    if(kind==='challenge') window._pendingPhotoChallenge = e.target.result;
+    else window._pendingPhotoSuggestion = e.target.result;
+    const prev = document.getElementById('photo-preview-'+kind);
+    if(prev) prev.innerHTML = `<img src="${e.target.result}" style="width:50px;height:50px;object-fit:cover;border-radius:8px;border:1px solid var(--line);">`;
+  };
+  reader.readAsDataURL(file);
+}
+function submitChallenge(){
+  if(currentRole==='citizen' && !hasValidGroup()){
+    showToast('Register your citizen group first (5+ members)');
+    go('registerGroup', {then:'challenge'});
+    return;
+  }
+  const title = document.getElementById('f-title').value.trim();
+  const desc = document.getElementById('f-desc').value.trim();
+  const scope = document.getElementById('f-scope').value.trim();
+  const domain = window._selectedDomain;
+  if(!title || !desc || !domain){ showToast('Fill in title, description and pick a domain'); return; }
+  const list = DB.get('challenges',[]);
+  const id = 'c'+Date.now();
+  list.unshift({id, title, desc, domain, status:'Open', postedBy: displayName(currentRole),
+    role: currentRole, scope: scope||'Not specified', createdAt: Date.now(), upvotes:0, votedBy:[],
+    photo: window._pendingPhotoChallenge || null});
+  DB.set('challenges', list);
+  window._pendingPhotoChallenge = null;
+  showToast('Challenge posted');
+  goRoot('challenge', {id});
+}
+function submitProposal(challengeId){
+  const title = document.getElementById('p-title').value.trim();
+  const org = document.getElementById('p-org').value.trim();
+  const desc = document.getElementById('p-desc').value.trim();
+  if(!title || !org || !desc){ showToast('Fill in all fields'); return; }
+  setOrgName(currentRole, org);
+  const list = DB.get('proposals',[]);
+  const id = 'p'+Date.now();
+  list.push({id, challengeId, title, org, role: currentRole, desc, createdAt: Date.now()});
+  DB.set('proposals', list);
+  const chs = DB.get('challenges',[]);
+  const ch = chs.find(c=>c.id===challengeId);
+  if(ch && ch.status==='Open'){ ch.status='In Review'; DB.set('challenges', chs); }
+  const notifs = DB.get('notifications',[]);
+  notifs.unshift({id:'n'+Date.now(), text:`${org} proposed a solution on "${ch?ch.title:'a challenge'}"`, time:Date.now(), read:false, target:challengeId});
+  DB.set('notifications', notifs);
+  showToast('Proposal submitted');
+  back();
+}
+function markNotifRead(id){
+  const list = DB.get('notifications',[]);
+  const n = list.find(x=>x.id===id); if(n) n.read=true;
+  DB.set('notifications', list);
+}
+function toggleBodyClass(cls){
+  document.body.classList.toggle(cls);
+  DB.set(cls, document.body.classList.contains(cls));
+}
+
+/* ---------- messaging ---------- */
+function ensureThread(id, title, subtitle, challengeId){
+  const threads = DB.get('threads',[]);
+  let t = threads.find(x=>x.id===id);
+  if(!t){
+    t = {id, title, subtitle: subtitle||'', challengeId: challengeId||null, createdAt: Date.now(), lastTime: Date.now()};
+    threads.unshift(t);
+    DB.set('threads', threads);
+  }
+  return t;
+}
+function openThread(id, title, subtitle, challengeId){
+  ensureThread(id, title, subtitle, challengeId);
+  go('thread', {id});
+}
+function sendMessage(threadId){
+  const input = document.getElementById('msg-input');
+  const text = input.value.trim();
+  if(!text) return;
+  const msgs = DB.get('messages',[]);
+  msgs.push({id:'m'+Date.now(), threadId, senderRole: currentRole, senderName: displayName(currentRole), text, time: Date.now()});
+  DB.set('messages', msgs);
+  const threads = DB.get('threads',[]);
+  const t = threads.find(x=>x.id===threadId);
+  if(t){ t.lastTime = Date.now(); DB.set('threads', threads); }
+  render();
+  requestAnimationFrame(()=>{
+    const box = document.getElementById('msg-scroll');
+    if(box) box.scrollTop = box.scrollHeight;
+    const i = document.getElementById('msg-input');
+    if(i) i.focus();
+  });
+}
+
+/* ================= renderers ================= */
+function confluenceSVG(){
+  return `<svg class="confluence-svg" viewBox="0 0 150 120" fill="none">
+    <line class="stream-line" x1="10" y1="14" x2="75" y2="70" stroke="#E3B23C" stroke-width="3" stroke-linecap="round"/>
+    <line class="stream-line" x1="75" y1="4" x2="75" y2="70" stroke="#4F9E9A" stroke-width="3" stroke-linecap="round"/>
+    <line class="stream-line" x1="140" y1="14" x2="75" y2="70" stroke="#C1554A" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="75" cy="70" r="7" fill="#E3B23C"/>
+    <path d="M55 92 C 65 108, 85 108, 95 92" stroke="#EDEAE0" stroke-width="2.5" stroke-linecap="round" fill="none"/>
+  </svg>`;
+}
+
+function renderTopbar(){
+  return `<div class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 150 120"><line x1="10" y1="14" x2="75" y2="70" stroke="#E3B23C" stroke-width="9" stroke-linecap="round"/><line x1="75" y1="4" x2="75" y2="70" stroke="#4F9E9A" stroke-width="9" stroke-linecap="round"/><line x1="140" y1="14" x2="75" y2="70" stroke="#C1554A" stroke-width="9" stroke-linecap="round"/><circle cx="75" cy="70" r="16" fill="#E3B23C"/></svg>
+      <div><div class="brand-name">Sangam</div><span class="brand-tag">CHALLENGES · SOLVERS</span></div>
+    </div>
+    <div style="display:flex; gap:4px;">
+      <button class="icon-btn" onclick="goRoot('messages')" aria-label="Messages">💬</button>
+      <button class="icon-btn" onclick="go('updates')" aria-label="Updates">✉</button>
+    </div>
+  </div>`;
+}
+
+function renderNav(activeScreen){
+  const items = NAV_ITEMS.map(n=>`
+    <button class="nav-item ${activeScreen===n.id?'active':''}" onclick="${n.id==='post'?"goRoot('postChoice')":`goRoot('${n.id}')`}">
+      <span class="ic">${n.ic}</span><span>${n.label}</span>
+    </button>`).join('');
+  return items;
+}
+
+function challengeCardHTML(ch){
+  const d = domainInfo(ch.domain);
+  const props = DB.get('proposals',[]).filter(p=>p.challengeId===ch.id);
+  const voted = (ch.votedBy||[]).includes(currentRole+':you');
+  return `<div class="card challenge-card">
+    <div onclick="go('challenge',{id:'${ch.id}'})">
+      ${ch.photo? `<img src="${ch.photo}" style="width:100%; height:140px; object-fit:cover; border-radius:10px; margin-bottom:10px;">`:''}
+      <div class="tag-row">
+        <span class="tag tag-domain">${d.ic} ${d.label}</span>
+        <span class="tag tag-status ${STATUS_CLASS[ch.status]}">${ch.status}</span>
+      </div>
+      <h3>${ch.title}</h3>
+      <p class="desc">${ch.desc.slice(0,120)}${ch.desc.length>120?'…':''}</p>
+    </div>
+    <div class="meta-row">
+      <div class="stats">
+        <span>${rolePill(ch.role)}</span>
+        <span>💡 ${props.length} proposal${props.length!==1?'s':''}</span>
+      </div>
+      <span>${ch.scope} · ${timeAgo(ch.createdAt)}</span>
+    </div>
+    <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+      <button class="upvote-btn ${voted?'voted':''}" onclick="event.stopPropagation(); toggleUpvote('${ch.id}')">
+        <b>▲ ${ch.upvotes}</b><span>Back it</span>
+      </button>
+    </div>
+  </div>`;
+}
+
+function screenHome(){
+  const challenges = DB.get('challenges',[]);
+  const solved = challenges.filter(c=>c.status==='Solved').length;
+  const active = challenges.filter(c=>c.status!=='Solved').length;
+  const proposals = DB.get('proposals',[]);
+  const recent = [...challenges].sort((a,b)=>b.createdAt-a.createdAt).slice(0,4);
+
+  return `
+  <div class="hero">
+    <span class="eyebrow" style="color:var(--text-onink-soft)">Welcome, ${ROLES[currentRole].label}</span>
+    <h1>Where a citizen's problem meets a university's research and industry's resources.</h1>
+    <p>Post a real challenge. Universities and companies converge with proposals. Government moves the strongest ones toward a pilot.</p>
+    <div class="confluence-wrap">
+      ${confluenceSVG()}
+      <div class="hero-stats">
+        <div class="hero-stat"><b>${active}</b><span>Active challenges</span></div>
+        <div class="hero-stat"><b>${proposals.length}</b><span>Proposals filed</span></div>
+        <div class="hero-stat"><b>${solved}</b><span>Solved</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title">Quick action</div>
+  <div class="card role-card" onclick="goPost('challenge')">
+    <div class="role-swatch" style="background:rgba(227,178,60,0.18);">✚</div>
+    <div><b>${currentRole==='citizen'? 'Report a challenge you\'ve seen' : currentRole==='government'? 'Post a challenge on behalf of your department' : 'Post a challenge for your team to solve'}</b>
+    <small>Takes under a minute</small></div>
+  </div>
+
+  ${roleSpecificHomeSection(challenges)}
+
+  <div class="section-title">Recently posted</div>
+  ${recent.map(challengeCardHTML).join('')}
+  <div class="btn-row">
+    <button class="btn btn-outline" style="flex:1;" onclick="goRoot('explore')">See all challenges</button>
+    <button class="btn btn-outline" style="flex:1;" onclick="exploreTab='tournaments'; goRoot('explore')">🏆 Tournaments</button>
+  </div>
+  `;
+}
+
+function roleSpecificHomeSection(challenges){
+  if(currentRole==='university'){
+    const proposals = DB.get('proposals',[]);
+    const needProposals = challenges.filter(c=> c.status!=='Solved' && !proposals.some(p=>p.challengeId===c.id && p.role==='university')).slice(0,3);
+    if(!needProposals.length) return '';
+    return `<div class="section-title">Open challenges with no university proposal yet</div>
+      ${needProposals.map(challengeCardHTML).join('')}`;
+  }
+  if(currentRole==='industry'){
+    const unis = {};
+    DB.get('proposals',[]).filter(p=>p.role==='university').forEach(p=>{ unis[p.org]=(unis[p.org]||0)+1; });
+    const names = Object.keys(unis).slice(0,3);
+    return `<div class="section-title">Universities you could partner with</div>
+      <div class="card">
+        ${names.length? names.map(n=>`
+          <div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--line);">
+            <span style="font-size:16px;">🎓</span>
+            <span style="flex:1; font-size:13px; font-weight:600;">${n}</span>
+            <button class="btn btn-outline btn-sm" onclick="openThread('partner_${slugify(n)}','${escapeAttr(n)}','Partnership request','')">Message</button>
+          </div>`).join('') : `<p style="font-size:13px; color:var(--text-soft);">No universities active yet — check back soon.</p>`}
+        <button class="btn btn-gold btn-block" style="margin-top:10px;" onclick="go('partners')">See all universities</button>
+      </div>`;
+  }
+  if(currentRole==='government'){
+    const review = challenges.filter(c=>c.status==='In Review').slice(0,3);
+    if(!review.length) return '';
+    return `<div class="section-title">Needs your review (${review.length})</div>
+      ${review.map(challengeCardHTML).join('')}`;
+  }
+  return '';
+}
+
+function screenExplore(){
+  if(exploreTab==='suggestions'){
+    let suggestions = DB.get('suggestions',[]);
+    if(filterDomain!=='all') suggestions = suggestions.filter(c=>c.domain===filterDomain);
+    if(exploreQuery.trim()) suggestions = suggestions.filter(c=> (c.title+c.desc).toLowerCase().includes(exploreQuery.toLowerCase()));
+    suggestions = [...suggestions].sort((a,b)=>b.createdAt-a.createdAt);
+    const domainPills = `<div class="filter-row">
+      <button class="pill-filter ${filterDomain==='all'?'active':''}" onclick="filterDomain='all'; render();">All domains</button>
+      ${DOMAINS.map(d=>`<button class="pill-filter ${filterDomain===d.id?'active':''}" onclick="filterDomain='${d.id}'; render();">${d.ic} ${d.label}</button>`).join('')}
+    </div>`;
+    return `
+    <div class="screen-head"><h2>Explore</h2><p>Browse challenges, suggestions, tournaments, or solved problems.</p></div>
+    ${exploreTabsHTML()}
+    <div class="field" style="margin-top:12px;">
+      <input type="search" placeholder="Search suggestions…" value="${exploreQuery}" oninput="exploreQuery=this.value; render();">
+    </div>
+    ${domainPills}
+    <div class="section-title">${suggestions.length} result${suggestions.length!==1?'s':''}</div>
+    ${suggestions.length? suggestions.map(suggestionCardHTML).join('') :
+      `<div class="empty-state"><div class="ic">💡</div><h3>No suggestions match</h3><p>Try a different domain, or post one yourself.</p></div>`}
+    `;
+  }
+  if(exploreTab==='tournaments'){
+    let tournaments = [...DB.get('tournaments',[])];
+    if(filterDomain!=='all') tournaments = tournaments.filter(t=>t.domain===filterDomain);
+    if(exploreQuery.trim()) tournaments = tournaments.filter(t=>(t.title+t.description).toLowerCase().includes(exploreQuery.toLowerCase()));
+    tournaments.sort((a,b)=> (a.status==='Open'?0:1) - (b.status==='Open'?0:1) || b.createdAt-a.createdAt);
+    const domainPills = `<div class="filter-row">
+      <button class="pill-filter ${filterDomain==='all'?'active':''}" onclick="filterDomain='all'; render();">All domains</button>
+      ${DOMAINS.map(d=>`<button class="pill-filter ${filterDomain===d.id?'active':''}" onclick="filterDomain='${d.id}'; render();">${d.ic} ${d.label}</button>`).join('')}
+    </div>`;
+    return `
+    <div class="screen-head"><h2>Explore</h2><p>When multiple teams take on the same problem, Government can turn it into a tournament — best working solution gets fast-tracked or rewarded.</p></div>
+    ${exploreTabsHTML()}
+    <div class="field" style="margin-top:12px;">
+      <input type="search" placeholder="Search tournaments…" value="${exploreQuery}" oninput="exploreQuery=this.value; render();">
+    </div>
+    ${domainPills}
+    <div class="section-title">${tournaments.length} tournament${tournaments.length!==1?'s':''}</div>
+    ${tournaments.length? tournaments.map(tournamentCardHTML).join('') :
+      `<div class="empty-state"><div class="ic">🏆</div><h3>No tournaments yet</h3><p>Government can start one from any challenge with multiple interested solvers.</p></div>`}
+    `;
+  }
+  if(exploreTab==='solved'){
+    let solvedChallenges = DB.get('challenges',[]).filter(c=>c.status==='Solved');
+    let solvedSuggestions = DB.get('suggestions',[]).filter(s=>s.status==='Solved');
+    if(filterDomain!=='all'){ solvedChallenges = solvedChallenges.filter(c=>c.domain===filterDomain); solvedSuggestions = solvedSuggestions.filter(s=>s.domain===filterDomain); }
+    if(exploreQuery.trim()){
+      const q = exploreQuery.toLowerCase();
+      solvedChallenges = solvedChallenges.filter(c=>(c.title+c.desc).toLowerCase().includes(q));
+      solvedSuggestions = solvedSuggestions.filter(s=>(s.title+s.desc).toLowerCase().includes(q));
+    }
+    const combined = [...solvedChallenges.map(c=>({...c,_type:'challenge'})), ...solvedSuggestions.map(s=>({...s,_type:'suggestion'}))]
+      .sort((a,b)=>b.createdAt-a.createdAt);
+    const domainPills = `<div class="filter-row">
+      <button class="pill-filter ${filterDomain==='all'?'active':''}" onclick="filterDomain='all'; render();">All domains</button>
+      ${DOMAINS.map(d=>`<button class="pill-filter ${filterDomain===d.id?'active':''}" onclick="filterDomain='${d.id}'; render();">${d.ic} ${d.label}</button>`).join('')}
+    </div>`;
+    return `
+    <div class="screen-head"><h2>Explore</h2><p>Every problem that's been fully resolved, with the official government record.</p></div>
+    ${exploreTabsHTML()}
+    <div class="field" style="margin-top:12px;">
+      <input type="search" placeholder="Search solved problems…" value="${exploreQuery}" oninput="exploreQuery=this.value; render();">
+    </div>
+    ${domainPills}
+    <div class="section-title">${combined.length} solved</div>
+    ${combined.length? combined.map(item=> item._type==='challenge'? challengeCardHTML(item) : suggestionCardHTML(item)).join('') :
+      `<div class="empty-state"><div class="ic">✅</div><h3>Nothing solved yet</h3><p>Solved challenges and suggestions will appear here as a public record.</p></div>`}
+    `;
+  }
+  let challenges = DB.get('challenges',[]);
+  if(filterDomain!=='all') challenges = challenges.filter(c=>c.domain===filterDomain);
+  if(filterStatus!=='all') challenges = challenges.filter(c=>c.status===filterStatus);
+  if(exploreQuery.trim()) challenges = challenges.filter(c=> (c.title+c.desc).toLowerCase().includes(exploreQuery.toLowerCase()));
+  challenges = [...challenges].sort((a,b)=>b.createdAt-a.createdAt);
+
+  const domainPills = `<div class="filter-row">
+    <button class="pill-filter ${filterDomain==='all'?'active':''}" onclick="filterDomain='all'; render();">All domains</button>
+    ${DOMAINS.map(d=>`<button class="pill-filter ${filterDomain===d.id?'active':''}" onclick="filterDomain='${d.id}'; render();">${d.ic} ${d.label}</button>`).join('')}
+  </div>`;
+  const statusPills = `<div class="filter-row">
+    <button class="pill-filter ${filterStatus==='all'?'active':''}" onclick="filterStatus='all'; render();">Any status</button>
+    ${STATUSES.map(s=>`<button class="pill-filter ${filterStatus===s?'active':''}" onclick="filterStatus='${s}'; render();">${s}</button>`).join('')}
+  </div>`;
+
+  return `
+  <div class="screen-head"><h2>Explore</h2><p>Browse by domain, status, or search for one you can help with.</p></div>
+  ${exploreTabsHTML()}
+  <div class="field" style="margin-top:12px;">
+    <input type="search" placeholder="Search challenges…" value="${exploreQuery}" oninput="exploreQuery=this.value; render();">
+  </div>
+  ${domainPills}
+  ${statusPills}
+  <div class="section-title">${challenges.length} result${challenges.length!==1?'s':''}</div>
+  ${challenges.length? challenges.map(challengeCardHTML).join('') :
+    `<div class="empty-state"><div class="ic">🔍</div><h3>No challenges match</h3><p>Try a different domain or status filter.</p></div>`}
+  `;
+}
+function exploreTabsHTML(){
+  return `<div class="filter-row">
+    <button class="pill-filter ${exploreTab==='challenges'?'active':''}" onclick="exploreTab='challenges'; filterStatus='all'; render();">⚠️ Challenges</button>
+    <button class="pill-filter ${exploreTab==='suggestions'?'active':''}" onclick="exploreTab='suggestions'; render();">💡 Suggestions</button>
+    <button class="pill-filter ${exploreTab==='tournaments'?'active':''}" onclick="exploreTab='tournaments'; render();">🏆 Tournaments</button>
+    <button class="pill-filter ${exploreTab==='solved'?'active':''}" onclick="exploreTab='solved'; render();">✅ Solved</button>
+  </div>`;
+}
+
+function screenChallenge(id){
+  const challenges = DB.get('challenges',[]);
+  const ch = challenges.find(c=>c.id===id);
+  if(!ch) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const d = domainInfo(ch.domain);
+  const proposals = DB.get('proposals',[]).filter(p=>p.challengeId===id).sort((a,b)=>b.createdAt-a.createdAt);
+  const voted = (ch.votedBy||[]).includes(currentRole+':you');
+
+  const canPropose = currentRole==='university' || currentRole==='industry';
+  const isGov = currentRole==='government';
+
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <span class="tag tag-status ${STATUS_CLASS[ch.status]}">${ch.status}</span>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    ${ch.photo? `<img src="${ch.photo}" style="width:100%; max-height:220px; object-fit:cover; border-radius:10px; margin-bottom:12px;">`:''}
+    <div class="tag-row"><span class="tag tag-domain">${d.ic} ${d.label}</span></div>
+    <h2 style="font-size:19px; font-weight:600; line-height:1.3;">${ch.title}</h2>
+    <p style="font-size:13.5px; color:var(--text-soft); line-height:1.6; margin:10px 0;">${ch.desc}</p>
+    <div class="meta-row" style="margin-top:12px;">
+      <span>${rolePill(ch.role)} <span style="margin-left:4px;">${ch.postedBy}</span></span>
+      <span>${ch.scope} · ${timeAgo(ch.createdAt)}</span>
+    </div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="upvote-btn ${voted?'voted':''}" onclick="toggleUpvote('${ch.id}')"><b>▲ ${ch.upvotes}</b><span>Back it</span></button>
+      ${canPropose? `<button class="btn btn-gold" onclick="go('proposeSolution',{id:'${ch.id}'})">Propose a solution</button>`:''}
+    </div>
+  </div>
+
+  ${ch.solutionUpdate? solutionUpdateCardHTML(ch.solutionUpdate) : ''}
+
+  ${ch.tournamentId? `
+  <div class="section-title">Tournament</div>
+  <div class="card role-card" onclick="go('tournament',{id:'${ch.tournamentId}'})">
+    <div class="role-swatch" style="background:rgba(227,178,60,0.18);">🏆</div>
+    <div style="flex:1;"><b>Part of an active tournament</b><small>Multiple teams are competing on this — see entries &amp; prize</small></div>
+  </div>` : ''}
+
+  ${isGov? `
+  <div class="section-title">Move this challenge</div>
+  <div class="card">
+    <div class="chip-select">
+      ${STATUSES.map(s=>`<span class="chip ${ch.status===s?'selected':''}" onclick="setChallengeStatus('${ch.id}','${s}')">${s}</span>`).join('')}
+    </div>
+  </div>
+  ${!ch.tournamentId? `
+  <div class="card" style="display:flex; align-items:center; gap:12px;">
+    <div style="flex:1;">
+      <b style="font-size:13px; display:block;">Multiple groups working on this?</b>
+      <small style="color:var(--text-soft); font-size:12px;">Turn it into a tournament — best solution gets fast-tracked or rewarded</small>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="go('linkTournament',{id:'${ch.id}'})">Start tournament</button>
+  </div>` : ''}
+  <div class="card" style="display:flex; align-items:center; gap:12px;">
+    <div style="flex:1;">
+      <b style="font-size:13px; display:block;">${ch.solutionUpdate? 'Edit the official solution update' : 'Publish an official solution update'}</b>
+      <small style="color:var(--text-soft); font-size:12px;">Start/end date and RTI reference, visible to everyone</small>
+    </div>
+    <button class="btn btn-gold btn-sm" onclick="go('postSolutionUpdate',{type:'challenge', id:'${ch.id}'})">${ch.solutionUpdate?'Edit':'Post'} update</button>
+  </div>` : ''}
+
+  ${(!isGov && ch.status!=='Open')? `
+  <div class="section-title">Report to government</div>
+  <div class="card" style="display:flex; align-items:center; gap:12px;">
+    <div style="flex:1;">
+      <b style="font-size:13px; display:block;">Share progress on this challenge privately</b>
+      <small style="color:var(--text-soft); font-size:12px;">Send details, data, or a pilot report directly to Government</small>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="openThread('gov_${ch.id}','Government','${escapeAttr(ch.title)}','${ch.id}')">Message Gov ↗</button>
+  </div>` : ''}
+
+  <div class="section-title">Proposals from universities & industry (${proposals.length})</div>
+  ${proposals.length? proposals.map(p=>`
+    <div class="proposal-card ${p.role}">
+      <div class="tag-row" style="margin-bottom:6px; justify-content:space-between; display:flex;">
+        <span>${rolePill(p.role)}</span>
+        ${p.role!==currentRole? `<button class="btn btn-outline btn-sm" onclick="openThread('prop_${p.id}','${escapeAttr(p.org)}','Re: ${escapeAttr(p.title)}','${ch.id}')">Message</button>`:''}
+      </div>
+      <h4>${p.title}</h4>
+      <div class="proposal-meta"><span>${p.org}</span><span>·</span><span>${timeAgo(p.createdAt)}</span></div>
+      <p>${p.desc}</p>
+    </div>`).join('') :
+    `<div class="empty-state"><div class="ic">💡</div><h3>No proposals yet</h3><p>Universities and industry partners can be the first to respond.</p></div>`}
+  `;
+}
+function escapeAttr(s){ return (s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;'); }
+
+function formatDate(d){
+  if(!d) return '—';
+  const dt = new Date(d+'T00:00:00');
+  if(isNaN(dt)) return d;
+  return dt.toLocaleDateString('en-IN', {day:'numeric', month:'short', year:'numeric'});
+}
+function solutionUpdateCardHTML(su){
+  return `
+  <div class="section-title">Official solution update</div>
+  <div class="card" style="border-left:4px solid var(--sage);">
+    <div class="tag-row"><span class="tag" style="background:rgba(107,143,90,0.15); color:#4a6339;">🏛️ Posted by Government</span></div>
+    <p style="font-size:13.5px; line-height:1.6; margin:8px 0;">${su.summary}</p>
+    <div class="meta-row" style="margin-top:10px; flex-wrap:wrap; gap:8px;">
+      <span>▶ Start: <b style="color:var(--text-dark);">${formatDate(su.startDate)}</b></span>
+      <span>■ Target end: <b style="color:var(--text-dark);">${formatDate(su.endDate)}</b></span>
+    </div>
+    ${su.rtiInfo? `<div class="divider"></div><div class="eyebrow" style="color:var(--text-soft);">RTI INFORMATION</div><p style="font-size:12.5px; color:var(--text-soft); line-height:1.6; margin-top:4px;">${su.rtiInfo}</p>`:''}
+    <div class="meta-row" style="margin-top:10px;"><span>Published ${timeAgo(su.postedAt)}</span></div>
+  </div>`;
+}
+function screenPostSolutionUpdate(type, id){
+  const list = DB.get(type==='challenge'?'challenges':'suggestions',[]);
+  const item = list.find(x=>x.id===id);
+  if(!item) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const su = item.solutionUpdate || {summary:'',startDate:'',endDate:'',rtiInfo:''};
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Post solution update</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 18px;">${item.title}</p>
+
+  <div class="field">
+    <label>What's the solution / what was done</label>
+    <textarea id="su-summary" placeholder="Summarise the accepted solution and current progress…">${su.summary}</textarea>
+  </div>
+  <div class="field">
+    <label>Work start date</label>
+    <input type="text" id="su-start" placeholder="YYYY-MM-DD" value="${su.startDate}" onfocus="this.type='date'" >
+  </div>
+  <div class="field">
+    <label>Target / actual end date</label>
+    <input type="text" id="su-end" placeholder="YYYY-MM-DD" value="${su.endDate}" onfocus="this.type='date'">
+  </div>
+  <div class="field">
+    <label>RTI information</label>
+    <textarea id="su-rti" placeholder="RTI reference number, filing officer, department contact, or where citizens can file an RTI for more details…">${su.rtiInfo}</textarea>
+    <div class="hint">This is published publicly for transparency.</div>
+  </div>
+  <button class="btn btn-primary btn-block" onclick="submitSolutionUpdate('${type}','${id}')">Publish update</button>
+  `;
+}
+function submitSolutionUpdate(type, id){
+  const summary = document.getElementById('su-summary').value.trim();
+  const startDate = document.getElementById('su-start').value.trim();
+  const endDate = document.getElementById('su-end').value.trim();
+  const rtiInfo = document.getElementById('su-rti').value.trim();
+  if(!summary || !startDate){ showToast('Add a summary and a start date'); return; }
+  const key = type==='challenge'?'challenges':'suggestions';
+  const list = DB.get(key,[]);
+  const item = list.find(x=>x.id===id);
+  if(!item) return;
+  item.solutionUpdate = {summary, startDate, endDate, rtiInfo, postedAt: Date.now()};
+  DB.set(key, list);
+  const notifs = DB.get('notifications',[]);
+  notifs.unshift({id:'n'+Date.now(), text:`Government published a solution update on "${item.title}"`, time:Date.now(), read:false, target:id});
+  DB.set('notifications', notifs);
+  showToast('Solution update published');
+  goRoot(type==='challenge'?'challenge':'suggestion', {id});
+}
+
+function screenPostChallenge(){
+  window._selectedDomain = window._selectedDomain || null;
+  window._pendingPhotoChallenge = null;
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Post a challenge</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 18px;">Describe a real problem. Be specific — specific challenges get better proposals.</p>
+
+  <div class="field">
+    <label>Title</label>
+    <input type="text" id="f-title" placeholder="e.g. Groundwater levels dropping fast in outskirts">
+  </div>
+  <div class="field">
+    <label>What's the problem, in detail?</label>
+    <textarea id="f-desc" placeholder="What's happening, who it affects, what's been tried already…"></textarea>
+  </div>
+  <div class="field">
+    <label>Photo (optional)</label>
+    ${photoCaptureHTML('challenge')}
+  </div>
+  <div class="field">
+    <label>Domain</label>
+    <div class="chip-select" id="domain-chips">
+      ${DOMAINS.map(d=>`<span class="chip" data-id="${d.id}" onclick="pickDomain('${d.id}')">${d.ic} ${d.label}</span>`).join('')}
+    </div>
+  </div>
+  <div class="field">
+    <label>Where (city / region)</label>
+    <input type="text" id="f-scope" placeholder="e.g. Nashik, Maharashtra">
+    <div class="hint">Posting as ${displayName(currentRole)}</div>
+  </div>
+  <button class="btn btn-primary btn-block" onclick="submitChallenge()">Post challenge</button>
+  `;
+}
+function pickDomain(id){
+  window._selectedDomain = id;
+  document.querySelectorAll('#domain-chips .chip').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.id===id);
+  });
+}
+function pickDomainSugg(id){
+  window._selectedDomainSugg = id;
+  document.querySelectorAll('#domain-chips-sugg .chip').forEach(c=>{
+    c.classList.toggle('selected', c.dataset.id===id);
+  });
+}
+
+function screenPostChoice(){
+  return `
+  <div class="screen-head"><h2>What do you want to post?</h2><p>A challenge is a specific problem needing a solution. A suggestion is a lighter idea universities or industry can pick up.</p></div>
+  <div class="card role-card" onclick="goPost('challenge')">
+    <div class="role-swatch" style="background:rgba(227,178,60,0.18);">⚠️</div>
+    <div style="flex:1;"><b>Post a challenge</b><small>A concrete problem that needs proposals and government tracking</small></div>
+  </div>
+  <div class="card role-card" onclick="goPost('suggestion')">
+    <div class="role-swatch" style="background:rgba(79,158,154,0.16);">💡</div>
+    <div style="flex:1;"><b>Post a suggestion</b><small>A lighter idea — universities or companies can take it up directly</small></div>
+  </div>
+  `;
+}
+
+/* ---------- citizen group registration ---------- */
+window._groupMemberCount = window._groupMemberCount || 5;
+function screenRegisterGroup(then){
+  const g = getCitizenGroup() || {name:'', members:[]};
+  window._groupMemberCount = Math.max(5, g.members.length || 5);
+  const count = window._groupMemberCount;
+  let memberFields = '';
+  for(let i=0;i<count;i++){
+    memberFields += `<div class="field" style="margin-bottom:10px;">
+      <label>Member ${i+1}${i<5?' (required)':' (optional)'}</label>
+      <input type="text" id="member-${i}" value="${escapeAttr(g.members[i]||'')}" placeholder="Full name">
+    </div>`;
+  }
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Register your citizen group</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 18px;">Sangam asks citizens to post as a group of at least 5, not as lone individuals — this keeps challenges representative of a real, shared concern.</p>
+  <div class="field">
+    <label>Group name</label>
+    <input type="text" id="group-name" value="${escapeAttr(g.name)}" placeholder="e.g. Sundarpur Residents Welfare Association">
+  </div>
+  <div class="section-title">Members</div>
+  <div id="member-fields">${memberFields}</div>
+  <button class="btn btn-outline btn-sm" style="margin-bottom:18px;" onclick="addMemberField()">+ Add another member</button>
+  <button class="btn btn-primary btn-block" onclick="submitGroup('${then||''}')">Save group</button>
+  `;
+}
+function addMemberField(){
+  window._groupMemberCount++;
+  const wrap = document.getElementById('member-fields');
+  const i = window._groupMemberCount-1;
+  const div = document.createElement('div');
+  div.className = 'field';
+  div.style.marginBottom = '10px';
+  div.innerHTML = `<label>Member ${i+1} (optional)</label><input type="text" id="member-${i}" placeholder="Full name">`;
+  wrap.appendChild(div);
+}
+function submitGroup(then){
+  const name = document.getElementById('group-name').value.trim();
+  const members = [];
+  for(let i=0;i<window._groupMemberCount;i++){
+    const el = document.getElementById('member-'+i);
+    if(el && el.value.trim()) members.push(el.value.trim());
+  }
+  if(!name){ showToast('Give your group a name'); return; }
+  if(members.length<5){ showToast('At least 5 named members are required'); return; }
+  DB.set('citizenGroup', {name, members});
+  showToast('Group registered');
+  if(then==='challenge') goRoot('postChallenge');
+  else if(then==='suggestion') goRoot('postSuggestion');
+  else goRoot('profile');
+}
+
+/* ---------- suggestions ---------- */
+function suggestionCardHTML(s){
+  const d = domainInfo(s.domain);
+  const voted = (s.votedBy||[]).includes(currentRole+':you');
+  return `<div class="card challenge-card">
+    <div onclick="go('suggestion',{id:'${s.id}'})">
+      ${s.photo? `<img src="${s.photo}" style="width:100%; height:140px; object-fit:cover; border-radius:10px; margin-bottom:10px;">`:''}
+      <div class="tag-row">
+        <span class="tag tag-domain">${d.ic} ${d.label}</span>
+        <span class="tag tag-status ${SUGG_STATUS_CLASS[s.status]}">${s.status}</span>
+      </div>
+      <h3>${s.title}</h3>
+      <p class="desc">${s.desc.slice(0,110)}${s.desc.length>110?'…':''}</p>
+    </div>
+    <div class="meta-row">
+      <div class="stats"><span>💡 ${s.group}</span></div>
+      <span>${s.scope} · ${timeAgo(s.createdAt)}</span>
+    </div>
+    <div style="margin-top:10px; display:flex; justify-content:flex-end;">
+      <button class="upvote-btn ${voted?'voted':''}" onclick="event.stopPropagation(); toggleSuggUpvote('${s.id}')">
+        <b>▲ ${s.upvotes}</b><span>Back it</span>
+      </button>
+    </div>
+  </div>`;
+}
+function toggleSuggUpvote(id){
+  const list = DB.get('suggestions',[]);
+  const s = list.find(x=>x.id===id); if(!s) return;
+  s.votedBy = s.votedBy||[];
+  const idx = s.votedBy.indexOf(currentRole+':you');
+  if(idx>-1){ s.votedBy.splice(idx,1); s.upvotes--; } else { s.votedBy.push(currentRole+':you'); s.upvotes++; }
+  DB.set('suggestions', list);
+  render();
+}
+function screenPostSuggestion(){
+  window._selectedDomainSugg = window._selectedDomainSugg || null;
+  window._pendingPhotoSuggestion = null;
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Post a suggestion</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 18px;">A lighter idea — something a university or company could pick up and run with.</p>
+
+  <div class="field">
+    <label>Title</label>
+    <input type="text" id="sg-title" placeholder="e.g. Shared e-bicycle stand near the metro exit">
+  </div>
+  <div class="field">
+    <label>Describe the idea</label>
+    <textarea id="sg-desc" placeholder="What it is, why it'd help, any rough numbers…"></textarea>
+  </div>
+  <div class="field">
+    <label>Photo (optional)</label>
+    ${photoCaptureHTML('suggestion')}
+  </div>
+  <div class="field">
+    <label>Domain</label>
+    <div class="chip-select" id="domain-chips-sugg">
+      ${DOMAINS.map(d=>`<span class="chip" data-id="${d.id}" onclick="pickDomainSugg('${d.id}')">${d.ic} ${d.label}</span>`).join('')}
+    </div>
+  </div>
+  <div class="field">
+    <label>Where (city / region)</label>
+    <input type="text" id="sg-scope" placeholder="e.g. Indiranagar, Bengaluru">
+    <div class="hint">Posting as ${displayName(currentRole)}</div>
+  </div>
+  <button class="btn btn-primary btn-block" onclick="submitSuggestion()">Post suggestion</button>
+  `;
+}
+function submitSuggestion(){
+  if(currentRole==='citizen' && !hasValidGroup()){
+    showToast('Register your citizen group first (5+ members)');
+    go('registerGroup', {then:'suggestion'});
+    return;
+  }
+  const title = document.getElementById('sg-title').value.trim();
+  const desc = document.getElementById('sg-desc').value.trim();
+  const scope = document.getElementById('sg-scope').value.trim();
+  const domain = window._selectedDomainSugg;
+  if(!title || !desc || !domain){ showToast('Fill in title, description and pick a domain'); return; }
+  const list = DB.get('suggestions',[]);
+  const id = 's'+Date.now();
+  list.unshift({id, title, desc, domain, group: displayName(currentRole), scope: scope||'Not specified',
+    createdAt: Date.now(), upvotes:0, votedBy:[], status:'Open', takenBy:null, photo: window._pendingPhotoSuggestion || null});
+  DB.set('suggestions', list);
+  window._pendingPhotoSuggestion = null;
+  showToast('Suggestion posted');
+  goRoot('suggestion', {id});
+}
+function takeUpSuggestion(id){
+  const list = DB.get('suggestions',[]);
+  const s = list.find(x=>x.id===id); if(!s) return;
+  const org = displayName(currentRole);
+  s.status = 'Taken up';
+  s.takenBy = {org, role: currentRole};
+  DB.set('suggestions', list);
+  const notifs = DB.get('notifications',[]);
+  notifs.unshift({id:'n'+Date.now(), text:`${org} took up the suggestion "${s.title}"`, time:Date.now(), read:false, target:id});
+  DB.set('notifications', notifs);
+  showToast(`Taken up — chat opened with ${s.group}`);
+  openThread('sugg_'+id, s.group, 'Re: '+s.title, id);
+}
+function screenSuggestionDetail(id){
+  const list = DB.get('suggestions',[]);
+  const s = list.find(x=>x.id===id);
+  if(!s) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const d = domainInfo(s.domain);
+  const voted = (s.votedBy||[]).includes(currentRole+':you');
+  const canTakeUp = (currentRole==='university' || currentRole==='industry') && s.status==='Open';
+  const isTaker = s.takenBy && s.takenBy.role===currentRole && s.takenBy.org===displayName(currentRole);
+  const isGov = currentRole==='government';
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <span class="tag tag-status ${SUGG_STATUS_CLASS[s.status]}">${s.status}</span>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    ${s.photo? `<img src="${s.photo}" style="width:100%; max-height:220px; object-fit:cover; border-radius:10px; margin-bottom:12px;">`:''}
+    <div class="tag-row"><span class="tag tag-domain">${d.ic} ${d.label}</span></div>
+    <h2 style="font-size:19px; font-weight:600; line-height:1.3;">${s.title}</h2>
+    <p style="font-size:13.5px; color:var(--text-soft); line-height:1.6; margin:10px 0;">${s.desc}</p>
+    <div class="meta-row" style="margin-top:12px;">
+      <span>💡 ${s.group}</span>
+      <span>${s.scope} · ${timeAgo(s.createdAt)}</span>
+    </div>
+    <div class="btn-row" style="margin-top:14px;">
+      <button class="upvote-btn ${voted?'voted':''}" onclick="toggleSuggUpvote('${s.id}')"><b>▲ ${s.upvotes}</b><span>Back it</span></button>
+      ${canTakeUp? `<button class="btn btn-gold" onclick="takeUpSuggestion('${s.id}')">Take up this suggestion</button>`:''}
+      ${(s.status!=='Open' && !isGov)? `<button class="btn btn-outline" onclick="openThread('sugg_${s.id}','${escapeAttr(s.takenBy? s.takenBy.org : s.group)}','Re: ${escapeAttr(s.title)}','${s.id}')">Open chat</button>`:''}
+    </div>
+    ${s.takenBy? `<div class="divider"></div><div class="meta-row"><span>Taken up by</span><span>${rolePill(s.takenBy.role)} ${s.takenBy.org}</span></div>`:''}
+  </div>
+
+  ${s.solutionUpdate? solutionUpdateCardHTML(s.solutionUpdate) : ''}
+
+  ${isGov? `
+  <div class="section-title">Move this suggestion</div>
+  <div class="card">
+    <div class="chip-select">
+      ${SUGGESTION_STATUSES.map(st=>`<span class="chip ${s.status===st?'selected':''}" onclick="setSuggestionStatus('${s.id}','${st}')">${st}</span>`).join('')}
+    </div>
+  </div>
+  <div class="card" style="display:flex; align-items:center; gap:12px;">
+    <div style="flex:1;">
+      <b style="font-size:13px; display:block;">${s.solutionUpdate? 'Edit the official solution update' : 'Publish an official solution update'}</b>
+      <small style="color:var(--text-soft); font-size:12px;">Start/end date and RTI reference, visible to everyone</small>
+    </div>
+    <button class="btn btn-gold btn-sm" onclick="go('postSolutionUpdate',{type:'suggestion', id:'${s.id}'})">${s.solutionUpdate?'Edit':'Post'} update</button>
+  </div>` : ''}
+
+  ${(s.status!=='Open' && !isGov && s.takenBy)? `
+  <div class="section-title">Report to government</div>
+  <div class="card" style="display:flex; align-items:center; gap:12px;">
+    <div style="flex:1;">
+      <b style="font-size:13px; display:block;">Share this solution privately</b>
+      <small style="color:var(--text-soft); font-size:12px;">Send it directly to Government once you're ready</small>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="openThread('gov_sugg_${s.id}','Government','${escapeAttr(s.title)}','${s.id}')">Message Gov ↗</button>
+  </div>` : ''}
+  `;
+}
+function setSuggestionStatus(id, status){
+  const list = DB.get('suggestions',[]);
+  const s = list.find(x=>x.id===id); if(!s) return;
+  s.status = status; DB.set('suggestions', list);
+  showToast(`Status updated to "${status}"`);
+  render();
+}
+
+/* ---------- tournaments ---------- */
+function isDeadlinePassed(deadline){
+  if(!deadline) return false;
+  return new Date(deadline+'T23:59:59').getTime() < Date.now();
+}
+function tournamentCardHTML(t){
+  const d = domainInfo(t.domain);
+  const closed = t.status==='Closed';
+  const late = !closed && isDeadlinePassed(t.deadline);
+  return `<div class="card challenge-card" onclick="go('tournament',{id:'${t.id}'})">
+    <div class="tag-row">
+      <span class="tag tag-domain">${d.ic} ${d.label}</span>
+      <span class="tag tag-status ${closed?'status-solved':(late?'status-review':'status-open')}">🏆 ${closed?'Closed · Winner announced':(late?'Judging':'Open')}</span>
+    </div>
+    <h3>${t.title}</h3>
+    <p class="desc">${t.description.slice(0,110)}${t.description.length>110?'…':''}</p>
+    <div class="meta-row">
+      <div class="stats"><span>👥 ${t.submissions.length} entr${t.submissions.length!==1?'ies':'y'}</span></div>
+      <span>${closed? 'Decided '+timeAgo(t.winner? t.winner.decidedAt : t.createdAt) : 'Closes '+formatDate(t.deadline)}</span>
+    </div>
+    ${closed && t.winner? `<div class="divider" style="margin:10px 0;"></div><div class="meta-row"><span>🏆 Winner</span><span>${rolePill(t.winner.role)} ${t.winner.org}</span></div>`:''}
+  </div>`;
+}
+function screenTournamentDetail(id){
+  const list = DB.get('tournaments',[]);
+  const t = list.find(x=>x.id===id);
+  if(!t) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const d = domainInfo(t.domain);
+  const closed = t.status==='Closed';
+  const isGov = currentRole==='government';
+  const canSubmit = (currentRole==='university' || currentRole==='industry') && !closed;
+  const already = t.submissions.find(s=>s.org===displayName(currentRole) && s.role===currentRole);
+  const challenges = DB.get('challenges',[]);
+  const linkedChallenges = t.challengeIds.map(cid=>challenges.find(c=>c.id===cid)).filter(Boolean);
+
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <span class="tag tag-status ${closed?'status-solved':'status-open'}">🏆 ${closed?'Closed':'Open'}</span>
+  </div>
+  <div class="card" style="margin-top:12px;">
+    <div class="tag-row"><span class="tag tag-domain">${d.ic} ${d.label}</span></div>
+    <h2 style="font-size:19px; font-weight:600; line-height:1.3;">${t.title}</h2>
+    <p style="font-size:13.5px; color:var(--text-soft); line-height:1.6; margin:10px 0;">${t.description}</p>
+    <div class="divider"></div>
+    <div class="meta-row" style="flex-wrap:wrap; gap:10px;">
+      <span>🎁 ${t.prizeType==='cash'?'Cash prize':'Fast-track adoption'}</span>
+      <span>⏳ Deadline: <b style="color:var(--text-dark);">${formatDate(t.deadline)}</b></span>
+    </div>
+    <p style="font-size:12.5px; color:var(--text-soft); line-height:1.6; margin-top:8px;">${t.prizeDetails}</p>
+  </div>
+
+  ${linkedChallenges.length? `
+  <div class="section-title">Linked challenges (${linkedChallenges.length})</div>
+  ${linkedChallenges.map(c=>`<div class="card" style="cursor:pointer; padding:12px 14px;" onclick="go('challenge',{id:'${c.id}'})">
+    <b style="font-size:13px;">${c.title}</b><br><small style="color:var(--text-soft); font-size:11.5px;">${c.scope}</small>
+  </div>`).join('')}` : ''}
+
+  ${canSubmit? `
+  <div class="card" style="display:flex; align-items:center; gap:12px; margin-top:14px;">
+    <div style="flex:1;">
+      <b style="font-size:13px; display:block;">${already? "You've already submitted" : 'Enter this tournament'}</b>
+      <small style="color:var(--text-soft); font-size:12px;">${already? 'You can still edit your entry until the deadline.' : 'Submit your solution before the deadline'}</small>
+    </div>
+    <button class="btn btn-gold btn-sm" onclick="go('submitTournament',{id:'${t.id}'})">${already?'Edit entry':'Submit entry'}</button>
+  </div>` : ''}
+
+  <div class="section-title">Entries (${t.submissions.length})</div>
+  ${t.submissions.length? t.submissions.map(s=>`
+    <div class="proposal-card ${s.role}">
+      <div class="tag-row" style="margin-bottom:6px; justify-content:space-between; display:flex;">
+        <span>${rolePill(s.role)}</span>
+        ${(isGov && !closed)? `<button class="btn btn-gold btn-sm" onclick="go('pickWinner',{tid:'${t.id}', sid:'${s.id}'})">Select as winner</button>`:''}
+        ${(closed && t.winner && t.winner.submissionId===s.id)? `<span class="tag" style="background:rgba(227,178,60,0.2); color:#8a6a12;">🏆 Winner</span>`:''}
+      </div>
+      <h4>${s.title}</h4>
+      <div class="proposal-meta"><span>${s.org}</span><span>·</span><span>${timeAgo(s.createdAt)}</span></div>
+      <p>${s.desc}</p>
+    </div>`).join('') :
+    `<div class="empty-state"><div class="ic">🏆</div><h3>No entries yet</h3><p>Universities and industry can be the first to submit.</p></div>`}
+
+  ${closed && t.winner? `
+  <div class="section-title">Why they won</div>
+  <div class="card" style="border-left:4px solid var(--gold);">
+    <p style="font-size:13px; line-height:1.6;">${t.winner.reason}</p>
+    <div class="meta-row" style="margin-top:8px;"><span>Decided by Government</span><span>${timeAgo(t.winner.decidedAt)}</span></div>
+  </div>` : ''}
+  `;
+}
+function screenSubmitTournamentEntry(id){
+  const list = DB.get('tournaments',[]);
+  const t = list.find(x=>x.id===id);
+  if(!t) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const existing = t.submissions.find(s=>s.org===displayName(currentRole) && s.role===currentRole) || {title:'',desc:''};
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Submit your entry</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 4px;">Entering:</p>
+  <p style="font-size:14px; font-weight:600; margin:0 0 18px;">${t.title}</p>
+
+  <div class="field">
+    <label>Solution title</label>
+    <input type="text" id="ts-title" value="${escapeAttr(existing.title)}" placeholder="e.g. Sensor-triggered drain gates">
+  </div>
+  <div class="field">
+    <label>Describe your solution</label>
+    <textarea id="ts-desc" placeholder="Your approach, why it'd win, timeline…">${existing.desc||''}</textarea>
+  </div>
+  <div class="hint" style="margin-bottom:14px;">Entering as ${displayName(currentRole)}</div>
+  <button class="btn btn-gold btn-block" onclick="submitTournamentEntry('${t.id}')">Submit entry</button>
+  `;
+}
+function submitTournamentEntry(id){
+  const title = document.getElementById('ts-title').value.trim();
+  const desc = document.getElementById('ts-desc').value.trim();
+  if(!title || !desc){ showToast('Fill in both fields'); return; }
+  const list = DB.get('tournaments',[]);
+  const t = list.find(x=>x.id===id); if(!t) return;
+  const org = displayName(currentRole);
+  const existingIdx = t.submissions.findIndex(s=>s.org===org && s.role===currentRole);
+  if(existingIdx>-1){ t.submissions[existingIdx].title=title; t.submissions[existingIdx].desc=desc; }
+  else { t.submissions.push({id:'sub'+Date.now(), org, role:currentRole, title, desc, createdAt:Date.now()}); }
+  DB.set('tournaments', list);
+  showToast('Entry submitted');
+  goRoot('tournament', {id});
+}
+function screenLinkTournament(challengeId){
+  const challenges = DB.get('challenges',[]);
+  const ch = challenges.find(c=>c.id===challengeId);
+  if(!ch) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const tournaments = DB.get('tournaments',[]).filter(t=>t.status==='Open' && t.domain===ch.domain && !t.challengeIds.includes(challengeId));
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Link to a tournament</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 18px;">Group this challenge with others facing the same problem, and let multiple teams compete for the fastest working solution.</p>
+
+  ${tournaments.length? `
+  <div class="section-title">Add to an existing tournament</div>
+  ${tournaments.map(t=>`<div class="card role-card" onclick="joinExistingTournament('${challengeId}','${t.id}')">
+    <div class="role-swatch" style="background:rgba(227,178,60,0.18);">🏆</div>
+    <div style="flex:1;"><b>${t.title}</b><small>${t.submissions.length} entries · closes ${formatDate(t.deadline)}</small></div>
+  </div>`).join('')}
+  <div class="divider"></div>` : ''}
+
+  <div class="section-title">Or start a new tournament</div>
+  <div class="field">
+    <label>Tournament title</label>
+    <input type="text" id="tn-title" placeholder="e.g. Best fix for recurring monsoon flooding" value="${escapeAttr('Best fix for: '+ch.title)}">
+  </div>
+  <div class="field">
+    <label>Describe why it's a tournament</label>
+    <textarea id="tn-desc" placeholder="Why multiple teams are being invited to compete on this…"></textarea>
+  </div>
+  <div class="field">
+    <label>Prize type</label>
+    <div class="chip-select">
+      <span class="chip selected" data-val="fast-track" onclick="pickPrizeType(this,'fast-track')">Fast-track adoption</span>
+      <span class="chip" data-val="cash" onclick="pickPrizeType(this,'cash')">Cash prize</span>
+    </div>
+  </div>
+  <div class="field">
+    <label>Prize details</label>
+    <textarea id="tn-prize" placeholder="e.g. Winning solution gets piloted first across all affected wards…"></textarea>
+  </div>
+  <div class="field">
+    <label>Submission deadline</label>
+    <input type="text" id="tn-deadline" placeholder="YYYY-MM-DD" onfocus="this.type='date'">
+  </div>
+  <button class="btn btn-primary btn-block" onclick="createTournamentFromChallenge('${challengeId}')">Create tournament</button>
+  `;
+}
+function pickPrizeType(el, val){
+  window._prizeType = val;
+  el.parentElement.querySelectorAll('.chip').forEach(c=>c.classList.toggle('selected', c===el));
+}
+function joinExistingTournament(challengeId, tournamentId){
+  const list = DB.get('tournaments',[]);
+  const t = list.find(x=>x.id===tournamentId); if(!t) return;
+  if(!t.challengeIds.includes(challengeId)) t.challengeIds.push(challengeId);
+  DB.set('tournaments', list);
+  const challenges = DB.get('challenges',[]);
+  const ch = challenges.find(c=>c.id===challengeId);
+  if(ch){ ch.tournamentId = tournamentId; DB.set('challenges', challenges); }
+  showToast('Linked to tournament');
+  goRoot('tournament', {id: tournamentId});
+}
+function createTournamentFromChallenge(challengeId){
+  const title = document.getElementById('tn-title').value.trim();
+  const description = document.getElementById('tn-desc').value.trim();
+  const prizeDetails = document.getElementById('tn-prize').value.trim();
+  const deadline = document.getElementById('tn-deadline').value.trim();
+  if(!title || !description || !deadline){ showToast('Fill in title, description and deadline'); return; }
+  const challenges = DB.get('challenges',[]);
+  const ch = challenges.find(c=>c.id===challengeId);
+  if(!ch){ showToast('Challenge not found'); return; }
+  const list = DB.get('tournaments',[]);
+  const id = 'tour'+Date.now();
+  list.unshift({id, title, domain: ch.domain, description, challengeIds:[challengeId],
+    prizeType: window._prizeType || 'fast-track', prizeDetails: prizeDetails||'Details to be announced.',
+    deadline, status:'Open', createdAt: Date.now(), submissions:[], winner:null});
+  DB.set('tournaments', list);
+  ch.tournamentId = id; DB.set('challenges', challenges);
+  showToast('Tournament created');
+  goRoot('tournament', {id});
+}
+function screenPickWinner(tid, sid){
+  const list = DB.get('tournaments',[]);
+  const t = list.find(x=>x.id===tid);
+  if(!t) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  const s = t.submissions.find(x=>x.id===sid);
+  if(!s) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Confirm winner</h2></div>
+  </div>
+  <div class="card">
+    <div class="tag-row">${rolePill(s.role)}</div>
+    <h3 style="font-size:15px; margin:6px 0;">${s.title}</h3>
+    <p style="font-size:13px; color:var(--text-soft); line-height:1.6;">${s.desc}</p>
+  </div>
+  <div class="field">
+    <label>Why this one won (published publicly)</label>
+    <textarea id="win-reason" placeholder="Judging rationale — cost, scalability, time-to-deploy…"></textarea>
+  </div>
+  <button class="btn btn-gold btn-block" onclick="confirmWinner('${tid}','${sid}')">Announce winner</button>
+  `;
+}
+function confirmWinner(tid, sid){
+  const reason = document.getElementById('win-reason').value.trim();
+  if(!reason){ showToast('Add a reason — this gets published'); return; }
+  const list = DB.get('tournaments',[]);
+  const t = list.find(x=>x.id===tid); if(!t) return;
+  const s = t.submissions.find(x=>x.id===sid); if(!s) return;
+  t.status = 'Closed';
+  t.winner = {submissionId:sid, org:s.org, role:s.role, reason, decidedAt: Date.now()};
+  DB.set('tournaments', list);
+
+  const challenges = DB.get('challenges',[]);
+  t.challengeIds.forEach(cid=>{
+    const ch = challenges.find(c=>c.id===cid);
+    if(ch){
+      ch.status = 'Solved';
+      if(!ch.solutionUpdate){
+        const today = new Date().toISOString().slice(0,10);
+        ch.solutionUpdate = {summary:`Won by ${s.org} in the "${t.title}" tournament: ${s.title}. ${s.desc}`, startDate: today, endDate:'', rtiInfo:'See the tournament page for full judging details and other entries.', postedAt: Date.now()};
+      }
+    }
+  });
+  DB.set('challenges', challenges);
+
+  const notifs = DB.get('notifications',[]);
+  notifs.unshift({id:'n'+Date.now(), text:`${s.org} won the tournament "${t.title}"`, time:Date.now(), read:false, target:tid});
+  DB.set('notifications', notifs);
+  showToast('Winner announced');
+  goRoot('tournament', {id: tid});
+}
+
+function screenProposeSolution(id){
+  const challenges = DB.get('challenges',[]);
+  const ch = challenges.find(c=>c.id===id);
+  if(!ch) return `<div class="empty-state"><h3>Not found</h3></div>`;
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Propose a solution</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 4px;">Responding to:</p>
+  <p style="font-size:14px; font-weight:600; margin:0 0 18px;">${ch.title}</p>
+
+  <div class="field">
+    <label>Proposal title</label>
+    <input type="text" id="p-title" placeholder="e.g. IoT sensors + community recharge pits">
+  </div>
+  <div class="field">
+    <label>${currentRole==='university'? 'Department / lab / student team' : 'Company / organisation name'}</label>
+    <input type="text" id="p-org" value="${escapeAttr(getOrgName(currentRole))}" placeholder="${currentRole==='university'? 'e.g. IIT Nagpur, Civil Dept' : 'e.g. GreenFlow Energy Pvt Ltd'}">
+  </div>
+  <div class="field">
+    <label>Describe your approach</label>
+    <textarea id="p-desc" placeholder="What you'd build or contribute, timeline, resources needed…"></textarea>
+  </div>
+  <button class="btn btn-gold btn-block" onclick="submitProposal('${ch.id}')">Submit proposal</button>
+  `;
+}
+
+function screenUpdates(){
+  const notifs = [...DB.get('notifications',[])].sort((a,b)=>b.time-a.time);
+  notifs.forEach(n=>markNotifRead(n.id));
+  return `
+  <div class="screen-head"><h2>Updates</h2><p>Activity on challenges and proposals you're involved with.</p></div>
+  ${notifs.length? notifs.map(n=>`
+    <div class="notif-item ${!n.read?'unread':''}" onclick="go('challenge',{id:'${n.target}'})">
+      <div class="notif-ic" style="background:var(--paper2);">💡</div>
+      <div class="notif-body" style="flex:1;">
+        <p>${n.text}</p>
+        <span class="notif-time">${timeAgo(n.time)}</span>
+      </div>
+    </div>`).join('') :
+    `<div class="empty-state"><div class="ic">✉</div><h3>No updates yet</h3><p>You'll see activity here once challenges you follow get proposals.</p></div>`}
+  `;
+}
+
+function screenMessages(){
+  const threads = [...DB.get('threads',[])].sort((a,b)=>b.lastTime-a.lastTime);
+  const msgs = DB.get('messages',[]);
+  return `
+  <div class="screen-head"><h2>Messages</h2><p>Private threads with organisations and government.</p></div>
+  ${threads.length? threads.map(t=>{
+    const last = msgs.filter(m=>m.threadId===t.id).sort((a,b)=>b.time-a.time)[0];
+    return `<div class="notif-item" style="cursor:pointer;" onclick="go('thread',{id:'${t.id}'})">
+      <div class="notif-ic" style="background:var(--paper2);">💬</div>
+      <div class="notif-body" style="flex:1;">
+        <b style="font-size:13px;">${t.title}</b>
+        <p>${last? (last.senderName+': '+last.text.slice(0,60)+(last.text.length>60?'…':'')) : (t.subtitle||'No messages yet — say hello')}</p>
+      </div>
+      <span class="notif-time">${timeAgo(t.lastTime)}</span>
+    </div>`;
+  }).join('') :
+  `<div class="empty-state"><div class="ic">💬</div><h3>No conversations yet</h3><p>Message a proposal's organisation, or share progress with Government from any challenge you're involved in.</p></div>`}
+  `;
+}
+
+function screenThread(id){
+  const threads = DB.get('threads',[]);
+  const t = threads.find(x=>x.id===id);
+  if(!t) return `<div class="empty-state"><h3>Conversation not found</h3></div>`;
+  const msgs = DB.get('messages',[]).filter(m=>m.threadId===id).sort((a,b)=>a.time-b.time);
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="goRoot('messages')">←</button>
+    <div><h2 style="font-size:17px;">${t.title}</h2>${t.subtitle? `<p style="font-size:12px; color:var(--text-soft); margin-top:2px;">${t.subtitle}</p>`:''}</div>
+  </div>
+  <div id="msg-scroll" style="max-height:52vh; overflow-y:auto; margin:14px 0; padding-right:2px;">
+    ${msgs.length? msgs.map(m=>{
+      const mine = m.senderRole===currentRole;
+      return `<div style="display:flex; ${mine?'justify-content:flex-end':'justify-content:flex-start'}; margin-bottom:10px;">
+        <div style="max-width:78%; background:${mine?'var(--ink)':'var(--paper2)'}; color:${mine?'var(--text-onink)':'var(--text-dark)'}; padding:9px 13px; border-radius:14px; ${mine?'border-bottom-right-radius:3px;':'border-bottom-left-radius:3px;'}">
+          <div style="font-size:10.5px; font-family:'IBM Plex Mono',monospace; opacity:0.7; margin-bottom:2px;">${m.senderName}</div>
+          <div style="font-size:13.5px; line-height:1.4;">${m.text}</div>
+          <div style="font-size:9.5px; opacity:0.6; margin-top:3px; text-align:right;">${timeAgo(m.time)}</div>
+        </div>
+      </div>`;
+    }).join('') : `<div class="empty-state" style="padding:30px 10px;"><div class="ic">👋</div><p>Start the conversation.</p></div>`}
+  </div>
+  <div style="display:flex; gap:8px; position:sticky; bottom:76px;">
+    <input type="text" id="msg-input" placeholder="Message as ${displayName(currentRole)}…" onkeydown="if(event.key==='Enter'){sendMessage('${id}');}" style="flex:1;">
+    <button class="btn btn-primary" onclick="sendMessage('${id}')">Send</button>
+  </div>
+  `;
+}
+
+function screenPartners(){
+  const proposals = DB.get('proposals',[]);
+  const unis = {};
+  proposals.filter(p=>p.role==='university').forEach(p=>{
+    if(!unis[p.org]) unis[p.org] = {org:p.org, challenges:[]};
+    unis[p.org].challenges.push(p.challengeId);
+  });
+  const list = Object.values(unis);
+  return `
+  <div class="screen-head-flex" style="margin-top:14px;">
+    <button class="back-btn" onclick="back()">←</button>
+    <div><h2 style="font-size:19px;">Partner with a university</h2></div>
+  </div>
+  <p style="font-size:13px; color:var(--text-soft); margin:6px 0 18px;">Universities already active on Sangam. Reach out to co-fund, mentor, or scale their proposal.</p>
+  ${list.length? list.map(u=>`
+    <div class="card" style="display:flex; align-items:center; gap:12px;">
+      <div class="role-swatch" style="background:rgba(79,158,154,0.16);">🎓</div>
+      <div style="flex:1;">
+        <b style="font-size:14px; display:block;">${u.org}</b>
+        <small style="color:var(--text-soft); font-size:12px;">Active on ${u.challenges.length} challenge${u.challenges.length!==1?'s':''}</small>
+      </div>
+      <button class="btn btn-gold btn-sm" onclick="openThread('partner_${slugify(u.org)}','${escapeAttr(u.org)}','Partnership request','')">Join &amp; help ↗</button>
+    </div>`).join('') :
+    `<div class="empty-state"><div class="ic">🎓</div><h3>No universities active yet</h3><p>Once a university proposes a solution, they'll show up here to partner with.</p></div>`}
+  `;
+}
+
+function saveOrgName(){
+  const val = document.getElementById('org-name-input').value.trim();
+  setOrgName(currentRole, val);
+  showToast(val? 'Organisation saved' : 'Cleared');
+  render();
+}
+function screenProfile(){
+  const largeText = document.body.classList.contains('large-text');
+  const highContrast = document.body.classList.contains('high-contrast');
+  const challenges = DB.get('challenges',[]);
+  const mine = challenges.filter(c=>c.role===currentRole).length;
+  const orgLabel = currentRole==='citizen'? 'Your organisation (optional)' : currentRole==='university'? 'Institution / department name' : 'Company name';
+  const orgHint = currentRole==='citizen'? 'Posting as an individual? Leave blank. Representing an RWA, NGO or community group? Add it here — it\'ll show on everything you post instead of "You".'
+    : currentRole==='university'? 'Shown on every proposal you submit, and lets industry find you under Partners.'
+    : 'Shown on every proposal, and on your messages to challenge owners and Government.';
+
+  return `
+  <div class="screen-head"><h2>Profile</h2><p>Switch roles to see how Sangam works from each side.</p></div>
+
+  <div class="stat-strip">
+    <div class="stat-box"><b>${mine}</b><span>Posted by you</span></div>
+    <div class="stat-box"><b>${DB.get('proposals',[]).filter(p=>p.role===currentRole).length}</b><span>Proposals sent</span></div>
+    <div class="stat-box"><b>${challenges.filter(c=>c.status==='Solved').length}</b><span>Solved total</span></div>
+  </div>
+
+  <div class="section-title">View as</div>
+  ${Object.keys(ROLES).map(r=>{
+    const role = ROLES[r];
+    return `<div class="card role-card" style="border-color:${currentRole===r?'var(--ink)':'var(--line)'}" onclick="switchRole('${r}')">
+      <div class="role-swatch" style="background:${currentRole===r?'var(--ink)':'var(--paper2)'}; color:${currentRole===r?'#fff':'inherit'};">${role.ic}</div>
+      <div style="flex:1;"><b>${role.label}${currentRole===r?' · active':''}</b><small>${role.desc}</small></div>
+      ${currentRole===r? '<span style="color:var(--gold); font-size:16px;">●</span>':''}
+    </div>`;
+  }).join('')}
+
+  ${currentRole==='citizen'? `
+  <div class="section-title">Citizen group</div>
+  ${(()=>{ const g = getCitizenGroup();
+    if(g && g.name && g.members && g.members.length>=5){
+      return `<div class="card role-card" onclick="go('registerGroup', {then:''})">
+        <div class="role-swatch" style="background:rgba(227,178,60,0.18);">👥</div>
+        <div style="flex:1;"><b>${g.name}</b><small>${g.members.length} registered members · tap to edit</small></div>
+      </div>`;
+    }
+    return `<div class="card">
+      <p style="font-size:13px; color:var(--text-soft); line-height:1.6; margin-bottom:10px;">Sangam asks citizens to post as a registered group of at least 5 people, not as lone individuals. Register your group to post a challenge or suggestion.</p>
+      <button class="btn btn-primary btn-block" onclick="go('registerGroup', {then:''})">Register your group</button>
+    </div>`;
+  })()}
+  ` : `
+  <div class="section-title">Organisation identity</div>
+  <div class="card">
+    <div class="field" style="margin-bottom:8px;">
+      <label>${orgLabel}</label>
+      <input type="text" id="org-name-input" value="${escapeAttr(getOrgName(currentRole))}" placeholder="${currentRole==='university'?'e.g. IIT Nagpur, Civil Dept':'e.g. GreenFlow Energy Pvt Ltd'}">
+      <div class="hint">${orgHint}</div>
+    </div>
+    <button class="btn btn-outline btn-sm" onclick="saveOrgName()">Save</button>
+  </div>`}
+
+  ${currentRole==='industry'? `
+  <div class="section-title">Collaborate</div>
+  <div class="card role-card" onclick="go('partners')">
+    <div class="role-swatch" style="background:rgba(79,158,154,0.16);">🎓</div>
+    <div style="flex:1;"><b>Partner with a university</b><small>Browse active universities and message them to join &amp; help</small></div>
+  </div>` : ''}
+
+  <div class="section-title">Accessibility</div>
+  <div class="card">
+    <div class="toggle-row">
+      <div><b>Large text</b><small>Increase text size across the app</small></div>
+      <button class="switch ${largeText?'on':''}" onclick="toggleBodyClass('large-text'); render();"></button>
+    </div>
+    <div class="toggle-row">
+      <div><b>High contrast</b><small>Stronger contrast for readability</small></div>
+      <button class="switch ${highContrast?'on':''}" onclick="toggleBodyClass('high-contrast'); render();"></button>
+    </div>
+  </div>
+
+  <div class="section-title">About</div>
+  <div class="card">
+    <p style="font-size:13px; line-height:1.6; color:var(--text-soft);">
+      Sangam ("confluence") is where a citizen's problem, a university's research capacity, and industry's resources meet.
+      A challenge is posted, proposals converge from universities and companies, and government moves the strongest ones toward a real pilot.
+    </p>
+  </div>
+  `;
+}
+
+/* ================= main render ================= */
+function render(){
+  const s = cur();
+  let body = '';
+  let activeNav = s.screen;
+  if(s.screen==='challenge') { body = screenChallenge(s.id); activeNav='explore'; }
+  else if(s.screen==='suggestion') { body = screenSuggestionDetail(s.id); activeNav='explore'; }
+  else if(s.screen==='tournament') { body = screenTournamentDetail(s.id); activeNav='explore'; }
+  else if(s.screen==='submitTournament') { body = screenSubmitTournamentEntry(s.id); activeNav='explore'; }
+  else if(s.screen==='linkTournament') { body = screenLinkTournament(s.id); activeNav='explore'; }
+  else if(s.screen==='pickWinner') { body = screenPickWinner(s.tid, s.sid); activeNav='explore'; }
+  else if(s.screen==='postChoice'){ body = screenPostChoice(); activeNav='post'; }
+  else if(s.screen==='postChallenge'){ body = screenPostChallenge(); activeNav='post'; }
+  else if(s.screen==='postSuggestion'){ body = screenPostSuggestion(); activeNav='post'; }
+  else if(s.screen==='registerGroup'){ body = screenRegisterGroup(s.then); activeNav='post'; }
+  else if(s.screen==='postSolutionUpdate'){ body = screenPostSolutionUpdate(s.type, s.id); activeNav='explore'; }
+  else if(s.screen==='proposeSolution'){ body = screenProposeSolution(s.id); activeNav='post'; }
+  else if(s.screen==='explore'){ body = screenExplore(); activeNav='explore'; }
+  else if(s.screen==='updates'){ body = screenUpdates(); activeNav='updates'; }
+  else if(s.screen==='messages'){ body = screenMessages(); activeNav='messages'; }
+  else if(s.screen==='thread'){ body = screenThread(s.id); activeNav='messages'; }
+  else if(s.screen==='partners'){ body = screenPartners(); activeNav='profile'; }
+  else if(s.screen==='profile'){ body = screenProfile(); activeNav='profile'; }
+  else { body = screenHome(); activeNav='home'; }
+
+  document.getElementById('app').innerHTML = `
+    <div class="desktop-shell">
+      <div class="sidebar">
+        <div class="brand" style="margin-bottom:26px;">
+          <svg class="brand-mark" viewBox="0 0 150 120"><line x1="10" y1="14" x2="75" y2="70" stroke="#E3B23C" stroke-width="9" stroke-linecap="round"/><line x1="75" y1="4" x2="75" y2="70" stroke="#4F9E9A" stroke-width="9" stroke-linecap="round"/><line x1="140" y1="14" x2="75" y2="70" stroke="#C1554A" stroke-width="9" stroke-linecap="round"/><circle cx="75" cy="70" r="16" fill="#E3B23C"/></svg>
+          <div><div class="brand-name">Sangam</div><span class="brand-tag">CHALLENGES · SOLVERS</span></div>
+        </div>
+        ${renderNav(activeNav)}
+      </div>
+      <div style="flex:1; min-width:0;">
+        ${renderTopbar()}
+        <div class="main">${body}</div>
+      </div>
+    </div>
+    <div class="bottom-nav">${renderNav(activeNav)}</div>
+  `;
+}
+
+/* ================= boot ================= */
+(function(){
+  if(DB.get('large-text', false)) document.body.classList.add('large-text');
+  if(DB.get('high-contrast', false)) document.body.classList.add('high-contrast');
+  render();
+})();
+
+/* ================= PWA service worker ================= */
+if('serviceWorker' in navigator){
+  window.addEventListener('load', ()=>{
+    navigator.serviceWorker.register('sw.js').catch(()=>{});
+  });
+}
+</script>
+</body>
+</html>
