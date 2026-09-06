@@ -17,6 +17,19 @@
 **Theme:** Disaster Management
 **Category:** Software
 
+✨ Our Solution
+
+SANGAM allows citizens to share challenges with evidence and helps connect those problems with people and institutions capable of finding solutions.
+
+Key Ideas:
+📢 Citizen-driven problem reporting
+🎓 University & student collaboration
+🏢 Industry partnerships
+🔍 Transparent issue tracking
+💡 Research and innovation opportunities
+📋 Solution and RTI guidance
+🏆 Collaborative problem-solving
+
 ## ✨ Key Features
 
 * 📢 Citizen-driven challenge reporting
@@ -34,11 +47,30 @@
 * JavaScript
 * Progressive Web App (PWA)
 
+## 📚 Research & References
+
+Our research considered existing government, innovation, and crowdsourcing platforms and frameworks, including:
+
+*Atal Innovation Mission
+*Institution's Innovation Council (IIC)
+*Right to Information Act, 2005
+*Digital Personal Data Protection Act, 2023
+*MyGov
+*Swachh Bharat citizen-reporting models
+*InnoCentive
+*HeroX
+*Kaggle
+*Smart India Hackathon
+
 ## 🔬 My Contribution
 
-My contribution to this Smart India Hackathon project focused on **Research & Competitive Analysis**.
+My role focused on Research & Competitive Analysis.
 
-I researched existing platforms, including **CPGRAMS and similar government platforms**, to understand existing solutions, identify gaps, and explore opportunities for our proposed solution.
+I researched existing platforms, including CPGRAMS and similar government/citizen platforms, to understand:
+
+*Existing solutions
+*Competitors and similar platforms
+*Gaps and opportunities for SANGAM
 
 ## 🌐 Live Demo
 
@@ -51,6 +83,8 @@ https://visionary-gingersnap-51a780.netlify.app/
 SANGAM was developed collaboratively as a team project for **Smart India Hackathon 2026**.
 
 **My Role:** Research & Competitive Analysis
+
+**TEAM LEADER :** MAYANK RAJBHAR
 
 Credit goes to all team members for their respective contributions to the research, development, design, and presentation of the project.
 
